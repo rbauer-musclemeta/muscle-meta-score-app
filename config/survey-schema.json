@@ -1,0 +1,270 @@
+{
+  "version": "1.0.0",
+  "project": "Muscle-Meta Matrix",
+  "surveys": [
+    {
+      "id": "catabolic_crisis_screen_v1",
+      "type": "screening",
+      "title": "Catabolic Crisis Screen",
+      "description": "Detects recent or active catabolic stress patterns before the main Functional Decline & Muscle Risk Scorecard.",
+      "collections": {
+        "survey": "surveys",
+        "questions": "surveyQuestions",
+        "options": "surveyOptions",
+        "submission": "surveySubmissions",
+        "responses": "surveyResponses",
+        "results": "surveyResults",
+        "pathways": "pathways",
+        "userPathways": "userPathways"
+      },
+      "questions": [
+        {
+          "id": "cc_q1_medical_event",
+          "order": 1,
+          "kind": "single_select",
+          "required": true,
+          "prompt": "Have you had, or are you expecting, a medical event that significantly reduces your normal activity?",
+          "scored": true,
+          "options": [
+            {"id": "a", "label": "No major illness, injury, hospitalization, or surgery recently or coming up soon", "score": 0},
+            {"id": "b", "label": "Minor illness or outpatient procedure with less than 1 week of reduced activity", "score": 1},
+            {"id": "c", "label": "Illness, injury, or surgery causing about 1–2 weeks of reduced activity", "score": 2},
+            {"id": "d", "label": "Serious illness, hospitalization, or major surgery causing 2–6 weeks of reduced activity", "score": 3},
+            {"id": "e", "label": "ICU stay, prolonged bed rest, major complications, or expected recovery longer than 6 weeks", "score": 4}
+          ]
+        },
+        {
+          "id": "cc_q2_weight_appetite_muscle",
+          "order": 2,
+          "kind": "single_select",
+          "required": true,
+          "prompt": "In the past 6 months, have you had unintended weight loss, reduced appetite, or signs that you may be losing muscle?",
+          "scored": true,
+          "options": [
+            {"id": "a", "label": "No meaningful change in appetite, body weight, or visible muscle", "score": 0},
+            {"id": "b", "label": "Slightly reduced appetite or I may have lost a small amount of weight", "score": 1},
+            {"id": "c", "label": "Noticeable appetite drop, looser clothes, or feeling weaker than usual", "score": 2},
+            {"id": "d", "label": "Clear unintended weight loss, visible muscle loss, or weakness affecting function", "score": 3},
+            {"id": "e", "label": "Rapid unintended weight loss, trouble eating enough, or visible wasting", "score": 4}
+          ]
+        },
+        {
+          "id": "cc_q3_activity_drop",
+          "order": 3,
+          "kind": "single_select",
+          "required": true,
+          "prompt": "How much has your activity level dropped recently compared with your usual level?",
+          "scored": true,
+          "options": [
+            {"id": "a", "label": "No major drop; I am moving at about my normal level", "score": 0},
+            {"id": "b", "label": "Slight drop; I am doing a bit less than usual but still moving most days", "score": 1},
+            {"id": "c", "label": "Moderate drop; I am walking, exercising, or doing daily activity noticeably less", "score": 2},
+            {"id": "d", "label": "Major drop; I have become mostly sedentary or had several days of bed rest/chair rest", "score": 3},
+            {"id": "e", "label": "Severe drop; I have had 1 or more weeks of near-total inactivity or still have not returned to my prior level", "score": 4}
+          ]
+        },
+        {
+          "id": "cc_driver",
+          "order": 4,
+          "kind": "single_select",
+          "required": true,
+          "prompt": "Which situation best describes what is driving this change right now?",
+          "scored": false,
+          "options": [
+            {"id": "illness", "label": "Illness or hospitalization"},
+            {"id": "surgery", "label": "Surgery, injury, or immobilization"},
+            {"id": "sedentary", "label": "Mostly inactivity / sedentary lifestyle / deconditioning"},
+            {"id": "weight_loss", "label": "Weight loss, appetite loss, or difficulty eating"},
+            {"id": "multiple", "label": "More than one of these"},
+            {"id": "unsure", "label": "Not sure"}
+          ]
+        }
+      ],
+      "scoring": {
+        "formula": "cc_q1_medical_event + cc_q2_weight_appetite_muscle + cc_q3_activity_drop",
+        "min": 0,
+        "max": 12,
+        "riskBands": [
+          {"id": "no_flag", "min": 0, "max": 1, "label": "No Current Catabolic Crisis Flag"},
+          {"id": "watch", "min": 2, "max": 3, "label": "Catabolic Stress Watch"},
+          {"id": "active_recovery", "min": 4, "max": 6, "label": "Active Catabolic Recovery Needed"},
+          {"id": "high_risk", "min": 7, "max": 12, "label": "High-Risk Catabolic Crisis Pattern"}
+        ],
+        "overrideRules": [
+          {"id": "medical_event_major_override", "if": "cc_q1_medical_event >= 3", "then": "at_least_active_recovery"},
+          {"id": "weight_loss_significant_override", "if": "cc_q2_weight_appetite_muscle >= 3", "then": "at_least_active_recovery"},
+          {"id": "severe_inactivity_override", "if": "cc_q3_activity_drop == 4", "then": "at_least_active_recovery"},
+          {"id": "multiple_driver_high_risk_boost", "if": "cc_driver == 'multiple' && total_score >= 6", "then": "high_risk"}
+        ],
+        "pathwayRouting": [
+          {"id": "standard_path", "if": "total_score <= 1", "routeTo": "standard_functional_decline_scorecard"},
+          {"id": "watch_path", "if": "total_score >= 2 && total_score <= 3", "routeTo": "catabolic_watch_pathway"},
+          {"id": "active_path", "if": "total_score >= 4 && total_score <= 6", "routeTo": "active_catabolic_recovery_pathway"},
+          {"id": "high_risk_path", "if": "total_score >= 7", "routeTo": "high_risk_catabolic_crisis_pathway"}
+        ],
+        "dominantTriggerLogic": [
+          {"id": "post_illness_recovery", "if": "cc_driver == 'illness'", "pathwayTag": "Post-Illness Recovery Pathway"},
+          {"id": "post_surgery_immobilization", "if": "cc_driver == 'surgery'", "pathwayTag": "Post-Surgery / Immobilization Pathway"},
+          {"id": "sedentary_deconditioned", "if": "cc_driver == 'sedentary'", "pathwayTag": "Sedentary / Deconditioned Recovery Pathway"},
+          {"id": "weight_loss_muscle_preservation", "if": "cc_driver == 'weight_loss'", "pathwayTag": "Weight Loss / Muscle Preservation Pathway"},
+          {"id": "multi_trigger", "if": "cc_driver == 'multiple'", "pathwayTag": "Complex Catabolic Recovery Pathway"},
+          {"id": "fallback_trigger", "if": "cc_driver == 'unsure'", "pathwayTag": "General Catabolic Recovery Pathway"}
+        ]
+      },
+      "frontend": {
+        "resultObject": {
+          "surveyId": "catabolic_crisis_screen_v1",
+          "submissionId": "string",
+          "userId": "string",
+          "totalScore": 0,
+          "riskBand": "no_flag",
+          "riskLabel": "No Current Catabolic Crisis Flag",
+          "primaryPathway": "standard_functional_decline_scorecard",
+          "pathwayTag": "Standard Prevention Pathway",
+          "redFlags": [],
+          "recommendedCta": {
+            "primary": "Continue to My Full Muscle Risk Score",
+            "secondary": "Learn More"
+          },
+          "summary": "string",
+          "detailBlocks": []
+        }
+      }
+    },
+    {
+      "id": "functional_decline_muscle_risk_scorecard_v1",
+      "type": "assessment",
+      "title": "Functional Decline & Muscle Risk Scorecard",
+      "description": "Measures functional decline, muscle risk, and pathway priorities across 12 categories and 4 pillars.",
+      "collections": {
+        "survey": "surveys",
+        "questions": "surveyQuestions",
+        "options": "surveyOptions",
+        "submission": "surveySubmissions",
+        "responses": "surveyResponses",
+        "results": "surveyResults"
+      },
+      "responseScale": {
+        "1": "Severe limitation / never / very poor",
+        "2": "Significant limitation / rarely",
+        "3": "Moderate / sometimes",
+        "4": "Mild limitation / usually",
+        "5": "Strong function / consistently / very good"
+      },
+      "categories": [
+        {"id": "joint_health", "label": "Joint Health", "pillar": "exercise_mobility"},
+        {"id": "functional_independence", "label": "Functional Independence", "pillar": "exercise_mobility"},
+        {"id": "mobility", "label": "Mobility", "pillar": "exercise_mobility"},
+        {"id": "balance", "label": "Balance", "pillar": "balance_brain"},
+        {"id": "recovery", "label": "Recovery", "pillar": "recovery_stress"},
+        {"id": "endurance", "label": "Endurance", "pillar": "exercise_mobility"},
+        {"id": "strength", "label": "Strength", "pillar": "exercise_mobility"},
+        {"id": "nutrition", "label": "Nutrition", "pillar": "nutrition_metabolism"},
+        {"id": "lifestyle", "label": "Lifestyle", "pillar": "recovery_stress"},
+        {"id": "brain_health", "label": "Brain Health", "pillar": "balance_brain"},
+        {"id": "stress_management", "label": "Stress Management", "pillar": "recovery_stress"},
+        {"id": "metabolic_flexibility", "label": "Metabolic Flexibility", "pillar": "nutrition_metabolism"}
+      ],
+      "pillars": [
+        {"id": "exercise_mobility", "label": "Exercise & Mobility", "categoryIds": ["joint_health", "functional_independence", "mobility", "endurance", "strength"], "min": 10, "max": 50},
+        {"id": "nutrition_metabolism", "label": "Nutrition & Metabolism", "categoryIds": ["nutrition", "metabolic_flexibility"], "min": 4, "max": 20},
+        {"id": "recovery_stress", "label": "Recovery & Stress", "categoryIds": ["recovery", "lifestyle", "stress_management"], "min": 6, "max": 30},
+        {"id": "balance_brain", "label": "Balance & Brain Health", "categoryIds": ["balance", "brain_health"], "min": 4, "max": 20}
+      ],
+      "questions": [
+        {"id": "jh_1", "categoryId": "joint_health", "order": 1, "prompt": "How often does joint pain or stiffness interfere with walking, stairs, lifting, or other daily movement?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "jh_2", "categoryId": "joint_health", "order": 2, "prompt": "How confident are you that your joints can support you during normal daily activity?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "fi_1", "categoryId": "functional_independence", "order": 3, "prompt": "How easy is it for you to manage daily tasks like dressing, cooking, cleaning, and shopping on your own?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "fi_2", "categoryId": "functional_independence", "order": 4, "prompt": "How easily can you get up from the floor or a very low position without needing help?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "mo_1", "categoryId": "mobility", "order": 5, "prompt": "How much difficulty do you have bending, squatting, kneeling, or reaching for everyday tasks?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "mo_2", "categoryId": "mobility", "order": 6, "prompt": "Over the past year, how would you rate your flexibility and range of motion?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "ba_1", "categoryId": "balance", "order": 7, "prompt": "How steady do you feel when standing, walking, or moving on uneven surfaces?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "ba_2", "categoryId": "balance", "order": 8, "prompt": "How confident are you going up and down stairs or standing on one leg briefly without support?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "re_1", "categoryId": "recovery", "order": 9, "prompt": "How would you rate your sleep and recovery quality over the past month?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "re_2", "categoryId": "recovery", "order": 10, "prompt": "After physical activity, how quickly do you recover and feel ready to move again?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "en_1", "categoryId": "endurance", "order": 11, "prompt": "How long can you stay physically active before needing to rest?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "en_2", "categoryId": "endurance", "order": 12, "prompt": "How often do you get winded, fatigued, or need to stop during stairs, chores, or walking?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "st_1", "categoryId": "strength", "order": 13, "prompt": "How would you rate your current strength for lifting, carrying, rising from a chair, or getting off the floor?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "st_2", "categoryId": "strength", "order": 14, "prompt": "How often do you currently do strength-building activity each week?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "nu_1", "categoryId": "nutrition", "order": 15, "prompt": "How consistently do you eat in a way that supports muscle health, including protein, hydration, and produce?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "nu_2", "categoryId": "nutrition", "order": 16, "prompt": "How often do processed foods or sugary drinks work against your nutrition goals?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "li_1", "categoryId": "lifestyle", "order": 17, "prompt": "How active are you throughout the day outside of formal exercise?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "li_2", "categoryId": "lifestyle", "order": 18, "prompt": "How much does sitting, schedule inconsistency, or daily routine get in the way of your health habits?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "br_1", "categoryId": "brain_health", "order": 19, "prompt": "Compared with several years ago, how would you rate your memory, focus, and mental sharpness?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "br_2", "categoryId": "brain_health", "order": 20, "prompt": "How often do you engage in activities that challenge your brain or improve your mood and mental engagement?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "sm_1", "categoryId": "stress_management", "order": 21, "prompt": "How overwhelmed or stressed do you feel in day-to-day life?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "sm_2", "categoryId": "stress_management", "order": 22, "prompt": "How consistently do you use stress-reducing practices such as movement, breathing, meditation, or relaxation?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "mf_1", "categoryId": "metabolic_flexibility", "order": 23, "prompt": "How stable is your energy between meals without needing sugar, snacks, or caffeine to get through the day?", "kind": "single_select", "required": true, "scoreRange": [1,5]},
+        {"id": "mf_2", "categoryId": "metabolic_flexibility", "order": 24, "prompt": "How comfortably can you go several hours between meals without becoming irritable, shaky, or fatigued?", "kind": "single_select", "required": true, "scoreRange": [1,5]}
+      ],
+      "scoring": {
+        "categoryFormula": "sum(question scores within category)",
+        "categoryRange": {"min": 2, "max": 10},
+        "categoryBands": [
+          {"id": "strong", "min": 9, "max": 10, "label": "strong / low concern"},
+          {"id": "stable", "min": 7, "max": 8, "label": "stable but could improve"},
+          {"id": "early_decline", "min": 5, "max": 6, "label": "early decline / moderate concern"},
+          {"id": "priority", "min": 2, "max": 4, "label": "significant concern / priority area"}
+        ],
+        "pillarFormula": "sum(category scores in pillar)",
+        "pillarNormalization": "(pillarRaw / pillarMax) * 100",
+        "totalFormula": "sum(all 24 question scores)",
+        "totalRange": {"min": 24, "max": 120},
+        "totalBands": [
+          {"id": "resilient", "min": 103, "max": 120, "label": "Resilient / low current concern"},
+          {"id": "stable_weak_links", "min": 85, "max": 102, "label": "Stable but showing early weak links"},
+          {"id": "early_pattern", "min": 66, "max": 84, "label": "Early functional decline pattern"},
+          {"id": "moderate_risk", "min": 47, "max": 65, "label": "Moderate muscle/function risk"},
+          {"id": "high_risk", "min": 24, "max": 46, "label": "High functional decline / muscle risk"}
+        ],
+        "redFlagRules": [
+          {"id": "balance_priority", "if": "category.balance <= 4", "then": "raise_priority"},
+          {"id": "functional_independence_priority", "if": "category.functional_independence <= 4", "then": "raise_priority"},
+          {"id": "floor_transfer_severe", "if": "fi_2 <= 2", "then": "raise_priority"},
+          {"id": "stairs_confidence_severe", "if": "ba_2 <= 2", "then": "raise_priority"}
+        ]
+      },
+      "frontend": {
+        "resultObject": {
+          "surveyId": "functional_decline_muscle_risk_scorecard_v1",
+          "submissionId": "string",
+          "userId": "string",
+          "totalScore": 0,
+          "totalBand": "resilient",
+          "totalLabel": "Resilient / low current concern",
+          "categoryScores": {
+            "joint_health": 0,
+            "functional_independence": 0,
+            "mobility": 0,
+            "balance": 0,
+            "recovery": 0,
+            "endurance": 0,
+            "strength": 0,
+            "nutrition": 0,
+            "lifestyle": 0,
+            "brain_health": 0,
+            "stress_management": 0,
+            "metabolic_flexibility": 0
+          },
+          "pillarScores": {
+            "exercise_mobility": {"raw": 0, "percent": 0},
+            "nutrition_metabolism": {"raw": 0, "percent": 0},
+            "recovery_stress": {"raw": 0, "percent": 0},
+            "balance_brain": {"raw": 0, "percent": 0}
+          },
+          "weakestPillar": "exercise_mobility",
+          "strongestPillar": "nutrition_metabolism",
+          "lowestCategory": "balance",
+          "topFocusAreas": [],
+          "redFlags": [],
+          "recommendedCta": {
+            "primary": "Start My Recommended Pathway",
+            "secondary": "View My Full Results"
+          },
+          "summary": "string",
+          "detailBlocks": []
+        }
+      }
+    }
+  ]
+}

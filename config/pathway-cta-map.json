@@ -1,0 +1,111 @@
+{
+  "version": "1.0.0",
+  "updatedFor": "muscle-meta-catabolic-and-functional-scorecard",
+  "ctas": {
+    "standard_prevention": {
+      "label": "Continue to My Full Muscle Risk Score",
+      "secondaryLabel": "See My Full Scorecard",
+      "target": "/assessment/functional-scorecard",
+      "resultTitle": "No Current Catabolic Crisis Flag",
+      "resultSubtitle": "You are not showing a strong recent crisis pattern."
+    },
+    "catabolic_watch": {
+      "label": "Start My Muscle Preservation Plan",
+      "secondaryLabel": "Continue to My Full Scorecard",
+      "target": "/pathways/catabolic-watch",
+      "resultTitle": "Catabolic Stress Watch",
+      "resultSubtitle": "You are showing mild signs of recent muscle stress."
+    },
+    "active_catabolic_recovery": {
+      "label": "Start My Recovery Plan",
+      "secondaryLabel": "Continue with My Full Assessment",
+      "target": "/pathways/active-catabolic-recovery",
+      "resultTitle": "Active Catabolic Recovery Needed",
+      "resultSubtitle": "Your answers suggest an active muscle-loss risk pattern."
+    },
+    "high_risk_catabolic_crisis": {
+      "label": "View My High-Priority Recovery Steps",
+      "secondaryLabel": "Continue to My Full Assessment",
+      "target": "/pathways/high-risk-catabolic-crisis",
+      "resultTitle": "High-Risk Catabolic Crisis Pattern",
+      "resultSubtitle": "Your answers suggest a higher-risk recovery situation that deserves prompt attention."
+    },
+    "post_illness_recovery": {
+      "label": "See My Post-Illness Recovery Guide",
+      "secondaryLabel": "Return to My Results",
+      "target": "/pathways/post-illness-recovery",
+      "badge": "Post-Illness Recovery",
+      "focus": "Restore nourishment, rebuild daily movement, pace fatigue, and monitor function."
+    },
+    "post_surgery_immobilization": {
+      "label": "See My Surgery Recovery Path",
+      "secondaryLabel": "Return to My Results",
+      "target": "/pathways/post-surgery-immobilization",
+      "badge": "Post-Surgery / Immobilization",
+      "focus": "Support healing, protect movement quality, and rebuild strength safely."
+    },
+    "sedentary_deconditioned_recovery": {
+      "label": "Start My Reconditioning Plan",
+      "secondaryLabel": "Return to My Results",
+      "target": "/pathways/sedentary-deconditioned-recovery",
+      "badge": "Sedentary / Deconditioned Recovery",
+      "focus": "Break the disuse cycle, restore movement confidence, and rebuild daily capacity gradually."
+    },
+    "weight_loss_muscle_preservation": {
+      "label": "See My Muscle Preservation Nutrition Plan",
+      "secondaryLabel": "Return to My Results",
+      "target": "/pathways/weight-loss-muscle-preservation",
+      "badge": "Weight Loss / Muscle Preservation",
+      "focus": "Improve nutrition support, protect muscle, and watch for worsening weakness."
+    },
+    "complex_catabolic_recovery": {
+      "label": "See My Integrated Recovery Plan",
+      "secondaryLabel": "Return to My Results",
+      "target": "/pathways/complex-catabolic-recovery",
+      "badge": "Complex Recovery Pattern",
+      "focus": "Combine nutrition, protective movement, recovery support, and closer monitoring."
+    },
+    "functional_exercise_mobility": {
+      "label": "Start My Movement & Strength Plan",
+      "secondaryLabel": "View My Full Results",
+      "target": "/pathways/exercise-mobility",
+      "badge": "Exercise & Mobility Focus",
+      "focus": "Improve movement capacity, lower-body strength, and daily function."
+    },
+    "functional_nutrition_metabolism": {
+      "label": "Start My Nutrition & Energy Plan",
+      "secondaryLabel": "View My Full Results",
+      "target": "/pathways/nutrition-metabolism",
+      "badge": "Nutrition & Metabolism Focus",
+      "focus": "Stabilize energy, improve muscle-supportive nutrition, and reduce weak links in fueling."
+    },
+    "functional_recovery_stress": {
+      "label": "Start My Recovery Reset",
+      "secondaryLabel": "View My Full Results",
+      "target": "/pathways/recovery-stress",
+      "badge": "Recovery & Stress Focus",
+      "focus": "Support sleep, reduce recovery debt, and improve daily resilience."
+    },
+    "functional_balance_brain_health": {
+      "label": "Start My Balance & Confidence Plan",
+      "secondaryLabel": "View My Full Results",
+      "target": "/pathways/balance-brain-health",
+      "badge": "Balance & Brain Health Focus",
+      "focus": "Improve steadiness, confidence, and brain-body coordination."
+    }
+  },
+  "rules": {
+    "primaryPriorityOrder": [
+      "high_risk_catabolic_crisis",
+      "active_catabolic_recovery",
+      "catabolic_watch",
+      "standard_prevention"
+    ],
+    "functionalFallbackByLowestPillar": {
+      "exercise_mobility": "functional_exercise_mobility",
+      "nutrition_metabolism": "functional_nutrition_metabolism",
+      "recovery_stress": "functional_recovery_stress",
+      "balance_brain_health": "functional_balance_brain_health"
+    }
+  }
+}

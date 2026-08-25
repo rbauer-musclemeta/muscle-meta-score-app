@@ -148,5 +148,217 @@ export default defineSchema({
   })
     .index("by_resultId", ["resultId"])
     .index("by_userId", ["userId"])
-    .index("by_pathwayKey", ["pathwayKey"])
+    .index("by_pathwayKey", ["pathwayKey"]),
+
+  // ---------------------------------------------------------------------
+  // Framework Reference Layer (Step 1)
+  //
+  // These tables encode the Muscle-Meta Matrix (MM) 4-Pillar x 12-Category
+  // framework, the GMMBB axis, modifying factors, population overlays,
+  // convergence patterns, and the two independent risk-scale systems as
+  // versioned, queryable DATA rather than constants scattered across
+  // frontend/backend code. They are seeded via `seedFrameworkTaxonomy`
+  // (see convex/seedFramework.ts) and are content tables, not user data:
+  // nothing here is written by end-user actions.
+  //
+  // Source of truth: 01-canonical/FRAMEWORK.md (see frameworkVersions.versionTag).
+  // If this schema and that document ever disagree, the document wins and
+  // this schema is the bug.
+  // ---------------------------------------------------------------------
+
+  frameworkVersions: defineTable({
+    versionTag: v.string(),
+    alignedDate: v.optional(v.string()),
+    sourceAuthority: v.string(),
+    notes: v.optional(v.string()),
+    isCurrent: v.boolean(),
+    createdAt: v.number()
+  })
+    .index("by_versionTag", ["versionTag"])
+    .index("by_isCurrent", ["isCurrent"]),
+
+  // 4 pillars. Radar is scored and rendered at PILLAR level; category counts
+  // are asymmetric by design (5-2-3-2) and must never be divided evenly.
+  pillars: defineTable({
+    pillarKey: v.union(
+      v.literal("exercise_mobility"),
+      v.literal("nutrition_metabolism"),
+      v.literal("recovery_stress"),
+      v.literal("balance_brain_health")
+    ),
+    label: v.string(),
+    colorHex: v.string(),
+    iconKind: v.union(
+      v.literal("force"),
+      v.literal("cellular"),
+      v.literal("wave"),
+      v.literal("neural")
+    ),
+    radarLetter: v.string(),
+    radarAngleDeg: v.number(),
+    order: v.number(),
+    categoryCount: v.number(),
+    gated: v.boolean(),
+    problemFraming: v.optional(v.string()),
+    beliefNarrative: v.optional(v.string()),
+    clinicalTags: v.array(v.string()),
+    frameworkVersion: v.string()
+  })
+    .index("by_pillarKey", ["pillarKey"])
+    .index("by_order", ["order"]),
+
+  // 12 categories total across the 4 pillars (5-2-3-2). categoryKey is a
+  // plain string (not a closed union) so it composes with the existing
+  // surveyQuestions.categoryKey field without a type mismatch.
+  categories: defineTable({
+    categoryKey: v.string(),
+    pillarKey: v.string(),
+    label: v.string(),
+    orderInPillar: v.number(),
+    globalOrder: v.number(),
+    frameworkVersion: v.string()
+  })
+    .index("by_categoryKey", ["categoryKey"])
+    .index("by_pillarKey", ["pillarKey"])
+    .index("by_pillarKey_orderInPillar", ["pillarKey", "orderInPillar"]),
+
+  // Measurement constructs scored INSIDE a category, never rendered as a
+  // standalone category label (e.g. Bone Density lives inside Balance).
+  // parentCategoryKeys is an array because one construct (Strength &
+  // Endurance) splits across two categories in Pillar 1.
+  constructs: defineTable({
+    constructKey: v.string(),
+    label: v.string(),
+    parentCategoryKeys: v.array(v.string()),
+    notes: v.optional(v.string()),
+    frameworkVersion: v.string()
+  }).index("by_constructKey", ["constructKey"]),
+
+  // GMMBB is the diagnostic lens (5-axis pentagon); the pillars are the
+  // intervention lens (4-axis radar). Canonical order is Gut-Muscle-
+  // Metabolic-Bone-Brain -- the acronym itself.
+  gmmbbAxes: defineTable({
+    axisKey: v.union(
+      v.literal("gut"),
+      v.literal("muscle"),
+      v.literal("metabolic"),
+      v.literal("bone"),
+      v.literal("brain")
+    ),
+    label: v.string(),
+    weightPercent: v.number(),
+    angleDeg: v.number(),
+    order: v.number(),
+    markers: v.array(v.string()),
+    frameworkVersion: v.string()
+  })
+    .index("by_axisKey", ["axisKey"])
+    .index("by_order", ["order"]),
+
+  // Modifying factors influence category scores. They are never displayed
+  // as additional pillars.
+  modifyingFactors: defineTable({
+    factorKey: v.string(),
+    label: v.string(),
+    appliesToPillarKeys: v.array(v.string()),
+    scopeNote: v.optional(v.string()),
+    frameworkVersion: v.string()
+  }).index("by_factorKey", ["factorKey"]),
+
+  // Population overlays RE-WEIGHT category priority. They never add
+  // pillars or categories, and they stack (a perimenopausal pickleball
+  // player on a GLP-1 can have three active at once).
+  populationOverlays: defineTable({
+    overlayKey: v.union(
+      v.literal("pickleball"),
+      v.literal("osteoporosis"),
+      v.literal("glp1"),
+      v.literal("post_hospital"),
+      v.literal("perimenopause"),
+      v.literal("postmenopause")
+    ),
+    label: v.string(),
+    elevatesCategoryKeys: v.array(v.string()),
+    description: v.optional(v.string()),
+    requiresIntakeField: v.optional(v.string()),
+    frameworkVersion: v.string()
+  }).index("by_overlayKey", ["overlayKey"]),
+
+  // Convergence patterns are co-occurrence signatures (distinct from a
+  // "node", which is a single thing). Full trigger logic lives in the
+  // canonical 01-canonical/CONVERGENCE-PATTERNS.md registry and must not
+  // be duplicated/invented here -- patterns without confirmed source data
+  // are seeded with dataStatus "pending_registry_data" and no name.
+  convergencePatterns: defineTable({
+    patternId: v.string(),
+    canonicalName: v.optional(v.string()),
+    deprecatedNames: v.array(v.string()),
+    primaryHome: v.optional(v.string()),
+    description: v.optional(v.string()),
+    dataStatus: v.union(v.literal("confirmed"), v.literal("pending_registry_data")),
+    frameworkVersion: v.string()
+  })
+    .index("by_patternId", ["patternId"])
+    .index("by_dataStatus", ["dataStatus"]),
+
+  // Cross-cutting nodes route/cross-reference across pillars and axes but
+  // never add a score. Full registry lives in
+  // 01-canonical/CROSS-CUTTING-NODES.md, which is not yet available to
+  // this build -- table is defined now so the schema doesn't need another
+  // migration once that source data lands, but is seeded empty.
+  crossCuttingNodes: defineTable({
+    nodeKey: v.string(),
+    label: v.string(),
+    primaryHomeType: v.optional(v.string()),
+    primaryHomeKey: v.optional(v.string()),
+    bridges: v.optional(v.array(v.string())),
+    dataStatus: v.union(v.literal("confirmed"), v.literal("pending_registry_data")),
+    frameworkVersion: v.string()
+  }).index("by_nodeKey", ["nodeKey"]),
+
+  // MM Health Score: consumer-facing, 0-100, HIGHER IS BETTER. This is a
+  // separate scale from clinicalRiskBands below and the two must never
+  // share a label or interface -- a raw CCRAF-style score is never shown
+  // to a consumer under this tier system.
+  riskTiers: defineTable({
+    tierKey: v.union(
+      v.literal("optimized"),
+      v.literal("functional"),
+      v.literal("declining"),
+      v.literal("at_risk"),
+      v.literal("critical")
+    ),
+    label: v.string(),
+    order: v.number(),
+    minScore: v.number(),
+    maxScore: v.number(),
+    colorHex: v.string(),
+    mutedColorHex: v.string(),
+    clinicalCopy: v.string(),
+    frameworkVersion: v.string()
+  })
+    .index("by_tierKey", ["tierKey"])
+    .index("by_order", ["order"]),
+
+  // Generic raw-instrument risk stratification, HIGHER IS WORSE, expressed
+  // as a percent-of-max-score band. Used by non-consumer-facing / clinical
+  // assessment types (e.g. CCRAF) -- see assessmentTypes.scoringDirection
+  // in Step 2. Deliberately a separate table/shape from riskTiers so the
+  // two scales cannot be accidentally merged in a query or a component.
+  clinicalRiskBands: defineTable({
+    bandKey: v.union(
+      v.literal("minimal"),
+      v.literal("low"),
+      v.literal("moderate"),
+      v.literal("high"),
+      v.literal("critical")
+    ),
+    label: v.string(),
+    order: v.number(),
+    minPercent: v.number(),
+    maxPercent: v.number(),
+    frameworkVersion: v.string()
+  })
+    .index("by_bandKey", ["bandKey"])
+    .index("by_order", ["order"])
 });

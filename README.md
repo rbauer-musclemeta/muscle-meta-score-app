@@ -27,3 +27,9 @@ real Convex codegen is available. Replace them with generated files after setup.
 ## Source of truth
 
 Architecture and scoring specs live in `/docs` and `/config`.
+
+## Framework reference layer
+
+The MM 4-Pillar/12-Category framework, GMMBB axis, modifying factors,
+population overlays, convergence patterns, and risk-tier systems are
+seeded data, not hardcoded constants. See `docs/framework-reference-layer.md`.

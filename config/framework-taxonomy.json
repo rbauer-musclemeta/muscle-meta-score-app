@@ -1,0 +1,197 @@
+{
+  "frameworkVersion": {
+    "versionTag": "v2.1.0",
+    "alignedDate": "2026-08-08",
+    "sourceAuthority": "01-canonical/FRAMEWORK.md",
+    "notes": "Seeded from the muscle-meta-design skill's references/framework.md implementation of the canonical kernel. Decisions reflected: D-001, D-003, D-006, D-007, D-009, D-010."
+  },
+
+  "pillars": [
+    {
+      "pillarKey": "exercise_mobility",
+      "label": "Exercise & Mobility",
+      "colorHex": "#009090",
+      "iconKind": "force",
+      "radarLetter": "E",
+      "radarAngleDeg": -90,
+      "order": 1,
+      "categoryCount": 5,
+      "gated": false,
+      "problemFraming": "Sarcopenia, mobility loss, force decline",
+      "beliefNarrative": "The Power Lie",
+      "clinicalTags": ["Sarcopenia", "VILPA Protocol", "Force Absorption", "VO2 Max", "Power Decline"]
+    },
+    {
+      "pillarKey": "nutrition_metabolism",
+      "label": "Nutrition & Metabolism",
+      "colorHex": "#D4AF37",
+      "iconKind": "cellular",
+      "radarLetter": "N",
+      "radarAngleDeg": 0,
+      "order": 2,
+      "categoryCount": 2,
+      "gated": false,
+      "problemFraming": "Metabolic inflexibility, GLP-1 lean mass risk",
+      "beliefNarrative": "The Fuel Betrayal",
+      "clinicalTags": ["Metabolic Flex", "GLP-1 Risk", "Gut Microbiome", "Leucine Threshold", "Mito Output"]
+    },
+    {
+      "pillarKey": "recovery_stress",
+      "label": "Recovery & Stress",
+      "colorHex": "#7c3aed",
+      "iconKind": "wave",
+      "radarLetter": "R",
+      "radarAngleDeg": 90,
+      "order": 3,
+      "categoryCount": 3,
+      "gated": false,
+      "problemFraming": "Catabolic cascade, cortisol dysregulation",
+      "beliefNarrative": "The Invisible Crisis",
+      "clinicalTags": ["Catabolic Risk", "Cortisol Load", "HRV Baseline", "Sleep Quality"]
+    },
+    {
+      "pillarKey": "balance_brain_health",
+      "label": "Balance & Brain Health",
+      "colorHex": "#16a34a",
+      "iconKind": "neural",
+      "radarLetter": "B",
+      "radarAngleDeg": 180,
+      "order": 4,
+      "categoryCount": 2,
+      "gated": true,
+      "problemFraming": "Fall risk, fracture, cognitive decline, dual-task deficit",
+      "beliefNarrative": "The Cognitive Cliff",
+      "clinicalTags": ["Fall Risk", "Dual-Task", "Bone Reserve", "Cognitive Reserve"]
+    }
+  ],
+
+  "categories": [
+    { "categoryKey": "joint_health", "pillarKey": "exercise_mobility", "label": "Joint Health", "orderInPillar": 1, "globalOrder": 1 },
+    { "categoryKey": "functional_independence", "pillarKey": "exercise_mobility", "label": "Functional Independence", "orderInPillar": 2, "globalOrder": 2 },
+    { "categoryKey": "mobility", "pillarKey": "exercise_mobility", "label": "Mobility", "orderInPillar": 3, "globalOrder": 3 },
+    { "categoryKey": "endurance", "pillarKey": "exercise_mobility", "label": "Endurance", "orderInPillar": 4, "globalOrder": 4 },
+    { "categoryKey": "strength", "pillarKey": "exercise_mobility", "label": "Strength", "orderInPillar": 5, "globalOrder": 5 },
+    { "categoryKey": "nutrition", "pillarKey": "nutrition_metabolism", "label": "Nutrition", "orderInPillar": 1, "globalOrder": 6 },
+    { "categoryKey": "metabolic_flexibility", "pillarKey": "nutrition_metabolism", "label": "Metabolic Flexibility", "orderInPillar": 2, "globalOrder": 7 },
+    { "categoryKey": "recovery", "pillarKey": "recovery_stress", "label": "Recovery", "orderInPillar": 1, "globalOrder": 8 },
+    { "categoryKey": "lifestyle", "pillarKey": "recovery_stress", "label": "Lifestyle", "orderInPillar": 2, "globalOrder": 9 },
+    { "categoryKey": "stress_management", "pillarKey": "recovery_stress", "label": "Stress Management", "orderInPillar": 3, "globalOrder": 10 },
+    { "categoryKey": "balance", "pillarKey": "balance_brain_health", "label": "Balance", "orderInPillar": 1, "globalOrder": 11 },
+    { "categoryKey": "brain_health", "pillarKey": "balance_brain_health", "label": "Brain Health", "orderInPillar": 2, "globalOrder": 12 }
+  ],
+
+  "constructs": [
+    {
+      "constructKey": "strength_endurance_split",
+      "label": "Strength & Endurance",
+      "parentCategoryKeys": ["endurance", "strength"],
+      "notes": "Splits across the Endurance and Strength categories in Pillar 1. Never render as a single category label."
+    },
+    {
+      "constructKey": "nutrient_density",
+      "label": "Nutrient Density",
+      "parentCategoryKeys": ["nutrition"],
+      "notes": "Measurement construct scored inside Nutrition -- never rendered as a standalone category label."
+    },
+    {
+      "constructKey": "gut_microbiome",
+      "label": "Gut Microbiome",
+      "parentCategoryKeys": ["nutrition"],
+      "notes": "Measurement construct scored inside Nutrition -- never rendered as a standalone category label."
+    },
+    {
+      "constructKey": "sleep_quality",
+      "label": "Sleep Quality",
+      "parentCategoryKeys": ["recovery"],
+      "notes": "Measurement construct scored inside Recovery -- never rendered as a standalone category label."
+    },
+    {
+      "constructKey": "hrv_baseline",
+      "label": "HRV Baseline",
+      "parentCategoryKeys": ["recovery"],
+      "notes": "Measurement construct scored inside Recovery -- never rendered as a standalone category label."
+    },
+    {
+      "constructKey": "cortisol_regulation",
+      "label": "Cortisol Regulation",
+      "parentCategoryKeys": ["stress_management"],
+      "notes": "Measurement construct scored inside Stress Management -- never rendered as a standalone category label."
+    },
+    {
+      "constructKey": "dual_task_processing",
+      "label": "Dual-Task Processing",
+      "parentCategoryKeys": ["balance"],
+      "notes": "Required individually, not only rolled up -- otherwise indistinguishable from CP-05 (Neuro-Metabolic Decline Pattern) at category level."
+    },
+    {
+      "constructKey": "bone_density",
+      "label": "Bone Density",
+      "parentCategoryKeys": ["balance"],
+      "notes": "Required individually, not only rolled up -- otherwise indistinguishable from CP-04 (Osteosarcopenia Compound Risk) at category level. Both patterns read as 'Balance low' if this construct is not exposed on its own."
+    },
+    {
+      "constructKey": "cognitive_reserve",
+      "label": "Cognitive Reserve",
+      "parentCategoryKeys": ["brain_health"],
+      "notes": "Measurement construct scored inside Brain Health -- never rendered as a standalone category label."
+    }
+  ],
+
+  "gmmbbAxes": [
+    { "axisKey": "gut", "label": "Gut Health", "weightPercent": 25, "angleDeg": -90, "order": 1, "markers": ["Microbiome diversity", "GI inflammation", "absorption efficiency"] },
+    { "axisKey": "muscle", "label": "Muscle Integrity", "weightPercent": 25, "angleDeg": -18, "order": 2, "markers": ["Lean mass retention", "fiber-type composition", "anabolic sensitivity"] },
+    { "axisKey": "metabolic", "label": "Metabolic Function", "weightPercent": 20, "angleDeg": 54, "order": 3, "markers": ["Insulin sensitivity", "mitochondrial output", "metabolic flexibility"] },
+    { "axisKey": "bone", "label": "Bone-Balance", "weightPercent": 15, "angleDeg": 126, "order": 4, "markers": ["Bone mineral density", "trabecular integrity", "force absorption"] },
+    { "axisKey": "brain", "label": "Brain Health", "weightPercent": 15, "angleDeg": 198, "order": 5, "markers": ["Cognitive reserve", "neuroplasticity markers", "dual-task processing"] }
+  ],
+
+  "modifyingFactors": [
+    { "factorKey": "gut_health", "label": "Gut Health", "appliesToPillarKeys": ["nutrition_metabolism"], "scopeNote": "Gut microbiome construct within the Nutrition category." },
+    { "factorKey": "bone_reserve", "label": "Bone Reserve", "appliesToPillarKeys": ["balance_brain_health"], "scopeNote": "Bone density construct within the Balance category." },
+    { "factorKey": "hormonal_balance", "label": "Hormonal Balance", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism", "balance_brain_health"], "scopeNote": "Scope narrowed to andropause and thyroid only. Menopausal status is a Population Overlay, not part of this factor (see decision D-009)." },
+    { "factorKey": "mitochondrial_function", "label": "Mitochondrial Function", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism"], "scopeNote": "Cellular energy; feeds the Metabolic GMMBB axis via Cross-Cutting Node CCN-03." },
+    { "factorKey": "inflammation_status", "label": "Inflammation Status", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism", "recovery_stress", "balance_brain_health"], "scopeNote": "Systemic modifier across all pillars." },
+    { "factorKey": "neurological_reserve", "label": "Neurological Reserve", "appliesToPillarKeys": ["balance_brain_health"], "scopeNote": "Cognitive and balance." }
+  ],
+
+  "populationOverlays": [
+    { "overlayKey": "pickleball", "label": "Pickleball", "elevatesCategoryKeys": ["joint_health", "balance"], "description": "Elevates Joint Health, Balance (dual-task), force absorption." },
+    { "overlayKey": "osteoporosis", "label": "Osteoporosis", "elevatesCategoryKeys": ["balance", "functional_independence"], "description": "Elevates Balance (bone reserve), Functional Independence, fall risk." },
+    { "overlayKey": "glp1", "label": "GLP-1", "elevatesCategoryKeys": ["metabolic_flexibility", "nutrition"], "description": "Elevates Metabolic Flexibility, Nutrition, lean mass preservation." },
+    { "overlayKey": "post_hospital", "label": "Post-Hospital", "elevatesCategoryKeys": ["functional_independence", "recovery", "stress_management"], "description": "Elevates Functional Independence, Recovery, Stress Management." },
+    { "overlayKey": "perimenopause", "label": "Perimenopause", "elevatesCategoryKeys": ["balance", "strength", "recovery", "metabolic_flexibility", "brain_health"], "description": "Whole-system re-weighting -- bone and muscle decline together rather than sequentially, not a single-category tilt.", "requiresIntakeField": "menopausal_status" },
+    { "overlayKey": "postmenopause", "label": "Postmenopause", "elevatesCategoryKeys": ["balance", "strength", "metabolic_flexibility"], "description": "Chronic altered baseline -- loss rate decelerates while cumulative risk climbs. Same categories as perimenopause, different tempo and copy.", "requiresIntakeField": "menopausal_status" }
+  ],
+
+  "convergencePatterns": [
+    { "patternId": "CP-01", "canonicalName": "Cortisol-Catabolic Loop", "deprecatedNames": ["Catabolic Cascade"], "dataStatus": "confirmed" },
+    { "patternId": "CP-02", "canonicalName": "Anabolic Resistance Syndrome", "deprecatedNames": ["Anabolic Resistance Pattern"], "dataStatus": "confirmed" },
+    { "patternId": "CP-03", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." },
+    { "patternId": "CP-04", "canonicalName": "Osteosarcopenia Compound Risk", "deprecatedNames": ["Osteosarcopenic Frailty"], "dataStatus": "confirmed" },
+    { "patternId": "CP-05", "canonicalName": "Neuro-Metabolic Decline Pattern", "deprecatedNames": ["Neuromotor Drift"], "dataStatus": "confirmed" },
+    { "patternId": "CP-06", "canonicalName": "Mitochondrial Crisis", "deprecatedNames": [], "dataStatus": "confirmed" },
+    { "patternId": "CP-07", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." },
+    { "patternId": "CP-08", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." },
+    { "patternId": "CP-09", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." },
+    { "patternId": "CP-10", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." },
+    { "patternId": "CP-11", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic." }
+  ],
+
+  "crossCuttingNodes": [],
+
+  "riskTiers": [
+    { "tierKey": "optimized", "label": "Optimized", "order": 1, "minScore": 85, "maxScore": 100, "colorHex": "#009090", "mutedColorHex": "#e6f5f5", "clinicalCopy": "Top-decile profile. Maintenance protocols only." },
+    { "tierKey": "functional", "label": "Functional", "order": 2, "minScore": 70, "maxScore": 84, "colorHex": "#3b82f6", "mutedColorHex": "#eff6ff", "clinicalCopy": "Strong foundation. Targeted optimization wins available." },
+    { "tierKey": "declining", "label": "Declining", "order": 3, "minScore": 55, "maxScore": 69, "colorHex": "#f59e0b", "mutedColorHex": "#fef3c7", "clinicalCopy": "Measurable signals of age-related drift. Highest-leverage intervention window." },
+    { "tierKey": "at_risk", "label": "At Risk", "order": 4, "minScore": 40, "maxScore": 54, "colorHex": "#f97316", "mutedColorHex": "#ffedd5", "clinicalCopy": "Multiple systems under strain. Clinical protocol indicated." },
+    { "tierKey": "critical", "label": "Critical", "order": 5, "minScore": 0, "maxScore": 39, "colorHex": "#dc2626", "mutedColorHex": "#fee2e2", "clinicalCopy": "Immediate clinical consultation recommended." }
+  ],
+
+  "clinicalRiskBands": [
+    { "bandKey": "minimal", "label": "Minimal Risk", "order": 1, "minPercent": 0, "maxPercent": 0.20 },
+    { "bandKey": "low", "label": "Low Risk", "order": 2, "minPercent": 0.21, "maxPercent": 0.40 },
+    { "bandKey": "moderate", "label": "Moderate Risk", "order": 3, "minPercent": 0.41, "maxPercent": 0.60 },
+    { "bandKey": "high", "label": "High Risk", "order": 4, "minPercent": 0.61, "maxPercent": 0.80 },
+    { "bandKey": "critical", "label": "Critical Risk", "order": 5, "minPercent": 0.81, "maxPercent": 1.00 }
+  ]
+}

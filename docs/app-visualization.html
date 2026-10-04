@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Muscle-Meta score app — build reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,500;1,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =============================================================================
+   MUSCLE-META MATRIX™  •  BRAND TOKENS
+   Clinical Intelligence for Active Aging
+   ========================================================================== */
+
+:root {
+  /* ---------- CORE PALETTE --------------------------------------------------- */
+  --teal:          #009090;
+  --teal-dark:     #006b6b;
+  --teal-light:    #00b3b3;
+  --teal-muted:    #e6f5f5;
+  --teal-tint:     #f0f9f9;
+
+  --gold:          #D4AF37;
+  --gold-dark:     #B5952F;
+  --gold-light:    #e3c56a;
+  --gold-muted:    #faf6e8;
+
+  --purple:        #7c3aed;
+  --purple-dark:   #6d28d9;
+  --purple-muted:  #f3f0fd;
+
+  --green:         #16a34a;
+  --green-dark:    #15803d;
+  --green-muted:   #f0fdf4;
+
+  /* ---------- NEUTRALS ------------------------------------------------------- */
+  --ink:           #1a2332;   /* headlines */
+  --ink-soft:      #344256;   /* body */
+  --ink-muted:     #6b7b8f;   /* captions, eyebrows */
+  --ink-faint:     #a8b3c2;   /* disabled, subtle */
+
+  --surface:       #f7f6f3;   /* warm off-white page bg */
+  --surface-tint:  #fdfcfa;
+  --border:        #e8e6e1;
+  --border-soft:   #f0eeea;
+  --white:         #ffffff;
+
+  /* ---------- SEMANTIC (Risk Tier) ------------------------------------------- */
+  --tier-1: #009090;          /* Optimized (teal) */
+  --tier-2: #3b82f6;          /* Functional (blue) */
+  --tier-3: #f59e0b;          /* Declining (amber) */
+  --tier-4: #f97316;          /* At Risk (orange) */
+  --tier-5: #dc2626;          /* Critical (red) */
+
+  --tier-1-muted: #e6f5f5;
+  --tier-2-muted: #eff6ff;
+  --tier-3-muted: #fef3c7;
+  --tier-4-muted: #ffedd5;
+  --tier-5-muted: #fee2e2;
+
+  /* ---------- TYPOGRAPHY ----------------------------------------------------- */
+  --font-display:  'Cormorant Garamond', 'Cormorant', Georgia, serif;
+  --font-body:     'Outfit', 'Helvetica Neue', Arial, sans-serif;
+
+  --fs-eyebrow: 11px;        --lh-eyebrow: 1.4;     --tr-eyebrow: 0.18em;
+  --fs-caption: 12px;        --lh-caption: 1.5;
+  --fs-micro:   13px;        --lh-micro:   1.55;
+  --fs-body:    16px;        --lh-body:    1.65;
+  --fs-lede:    19px;        --lh-lede:    1.6;
+  --fs-h4:      22px;        --lh-h4:      1.25;
+  --fs-h3:      28px;        --lh-h3:      1.2;
+  --fs-h2:      40px;        --lh-h2:      1.12;
+  --fs-h1:      64px;        --lh-h1:      1.05;
+  --fs-display: 88px;        --lh-display: 1.02;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* ---------- SPACING (8pt grid) --------------------------------------------- */
+  --s-1:   4px;
+  --s-2:   8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  96px;
+  --s-10: 128px;
+
+  --content-max: 1200px;
+  --content-narrow: 880px;
+  --gutter: 32px;
+  --gutter-mobile: 20px;
+
+  /* ---------- RADII ---------------------------------------------------------- */
+  --r-1:  6px;
+  --r-2:  10px;
+  --r-3:  14px;
+  --r-4:  20px;
+  --r-5:  28px;
+  --r-pill: 999px;
+
+  /* ---------- SHADOWS (clinical luxury — low and soft) ---------------------- */
+  --shadow-xs:  0 1px 2px rgba(26, 35, 50, 0.04);
+  --shadow-sm:  0 2px 8px rgba(26, 35, 50, 0.05);
+  --shadow-md:  0 6px 20px rgba(26, 35, 50, 0.07);
+  --shadow-lg:  0 12px 40px rgba(26, 35, 50, 0.08);
+  --shadow-teal: 0 8px 30px rgba(0, 144, 144, 0.15);
+  --shadow-gold: 0 4px 16px rgba(212, 175, 55, 0.25);
+
+  /* ---------- MOTION --------------------------------------------------------- */
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:    150ms;
+  --dur-base:    240ms;
+  --dur-slow:    420ms;
+  --dur-reveal:  900ms;
+
+  /* ---------- Z ------------------------------------------------------------- */
+  --z-grain: 1;
+  --z-nav:   50;
+  --z-sticky: 60;
+  --z-modal: 100;
+}
+
+/* =============================================================================
+   BASE ELEMENTS
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: -0.02em; }
+h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: -0.015em; }
+h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+h4 { font-size: var(--fs-h4); line-height: var(--lh-h4); }
+
+p  { margin: 0; color: var(--ink-soft); }
+
+em { font-style: italic; }
+
+a { color: var(--teal); text-decoration: none; transition: color var(--dur-fast) var(--ease-out); }
+a:hover { color: var(--gold-dark); }
+
+button { font-family: var(--font-body); }
+
+::selection { background: var(--teal-muted); color: var(--ink); }
+
+/* =============================================================================
+   TYPE UTILITIES
+   ========================================================================== */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-semi);
+  letter-spacing: var(--tr-eyebrow);
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.eyebrow-ink    { color: var(--ink); }
+.eyebrow-gold   { color: var(--gold-dark); }
+.eyebrow-muted  { color: var(--ink-muted); }
+
+.lede {
+  font-family: var(--font-body);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  color: var(--ink-soft);
+  font-weight: var(--fw-regular);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-weight: var(--fw-bold);
+}
+
+.serif-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--fw-medium);
+  color: var(--teal);
+}
+
+/* =============================================================================
+   BUTTONS
+   ========================================================================== */
+.mmm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.01em;
+  border-radius: var(--r-pill);
+  padding: 14px 28px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all var(--dur-base) var(--ease-out);
+  text-decoration: none;
+  line-height: 1;
+}
+.mmm-btn-primary {
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+.mmm-btn-primary:hover {
+  background: var(--ink);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
+}
+.mmm-btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--border);
+}
+.mmm-btn-ghost:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--teal-tint);
+}
+.mmm-btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: var(--shadow-gold);
+}
+.mmm-btn-gold:hover {
+  background: var(--gold-dark);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+.mmm-btn-dark {
+  background: var(--ink);
+  color: var(--white);
+}
+.mmm-btn-dark:hover {
+  background: var(--teal);
+  border-color: var(--gold);
+}
+.mmm-btn-lg { padding: 18px 36px; font-size: 16px; }
+.mmm-btn-sm { padding: 10px 20px; font-size: 13px; }
+
+/* =============================================================================
+   CARDS
+   ========================================================================== */
+.mmm-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-3);
+  padding: var(--s-6);
+  transition: all var(--dur-base) var(--ease-out);
+}
+.mmm-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+
+/* =============================================================================
+   GRAIN TEXTURE OVERLAY
+   ========================================================================== */
+.mmm-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-grain);
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+}
+
+/* =============================================================================
+   SCROLL REVEAL
+   ========================================================================== */
+.mmm-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--dur-reveal) var(--ease-out),
+              transform var(--dur-reveal) var(--ease-out);
+}
+.mmm-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.mmm-reveal-delay-1 { transition-delay: 80ms; }
+.mmm-reveal-delay-2 { transition-delay: 160ms; }
+.mmm-reveal-delay-3 { transition-delay: 240ms; }
+.mmm-reveal-delay-4 { transition-delay: 320ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mmm-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* =============================================================================
+   LAYOUT HELPERS
+   ========================================================================== */
+.mmm-container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.mmm-section { padding: var(--s-9) 0; }
+.mmm-section-sm { padding: var(--s-7) 0; }
+
+@media (max-width: 768px) {
+  :root {
+    --fs-h1: 40px;
+    --fs-h2: 30px;
+    --fs-h3: 24px;
+    --fs-display: 56px;
+    --gutter: var(--gutter-mobile);
+    --s-9: 64px;
+  }
+  .mmm-btn { padding: 13px 22px; font-size: 14px; }
+}
+
+
+/* ===================== PAGE LAYER (tokens only) ===================== */
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+h1 { font-size: clamp(40px, 6vw, 68px); }
+h2 { font-size: clamp(30px, 4vw, 40px); }
+code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.86em; }
+code { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-1); padding: 1px 6px; color: var(--ink); }
+
+/* status colors: built = teal, planned = gold, needs input = muted dashed */
+:root { --st-built: var(--teal); --st-plan: var(--gold-dark); --st-wait: var(--ink-muted); }
+
+.nav {
+  position: sticky; top: 0; z-index: var(--z-nav);
+  background: rgba(247,246,243,0.78);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent; transition: border-color var(--dur-base) var(--ease-out);
+}
+.nav.scrolled { border-bottom-color: rgba(0,144,144,0.15); }
+.nav-in { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); min-height: 64px; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--ink); white-space: nowrap; }
+.brand span { color: var(--teal); font-style: italic; font-weight: 600; }
+.nav-links { display: flex; gap: var(--s-1); overflow-x: auto; scrollbar-width: none; }
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-soft); padding: 12px 14px; border-radius: var(--r-pill); white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+.nav-links a:hover { color: var(--teal); background: var(--teal-tint); }
+
+.hero { position: relative; padding: var(--s-9) 0 var(--s-7); overflow: hidden; }
+.hero .eyebrow { margin-bottom: var(--s-4); display: block; }
+.hero h1 em { font-style: italic; color: var(--teal); font-weight: 600; }
+.hero .lede { max-width: 700px; margin-top: var(--s-5); }
+.meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-top: var(--s-5); font-size: 13px; color: var(--ink-muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-4); margin-top: var(--s-7); }
+.stat { padding: var(--s-5); }
+.stat .n { font-family: var(--font-display); font-size: 48px; line-height: 1; font-weight: 700; color: var(--ink); }
+.stat .n.zero { color: var(--ink-muted); }
+.stat .l { font-size: 14px; color: var(--ink-soft); margin-top: var(--s-2); }
+.stat .s { font-size: 12px; color: var(--ink-muted); margin-top: var(--s-1); }
+
+.legend { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-5); margin-top: var(--s-6); font-size: 13px; color: var(--ink-soft); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 8px; vertical-align: -1px; }
+.i-built { background: var(--st-built); }
+.i-plan { background: var(--gold-muted); border: 1.5px solid var(--gold); }
+.i-wait { background: transparent; border: 1.5px dashed var(--ink-muted); }
+
+.sec-head { max-width: 760px; margin-bottom: var(--s-7); }
+.sec-head h2 { margin: var(--s-3) 0 var(--s-4); }
+.sec-head .lede { font-size: 17px; }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--r-pill); padding: 4px 10px; line-height: 1.3; white-space: nowrap; }
+.b-built { background: var(--teal-muted); color: var(--teal-dark); }
+.b-plan { background: var(--gold-muted); color: var(--gold-dark); border: 1px solid var(--gold-light); }
+.b-wait { background: transparent; color: var(--ink-muted); border: 1px dashed var(--ink-muted); }
+.b-pub { background: var(--white); color: var(--ink-muted); border: 1px solid var(--border); }
+.b-auth { background: var(--ink); color: var(--white); }
+
+/* ---------- journey ---------- */
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--s-3); align-items: stretch; position: relative; }
+.node { position: relative; padding: var(--s-4); display: flex; flex-direction: column; gap: var(--s-2); min-height: 168px; }
+.node .route { font-size: 11px; color: var(--ink-muted); overflow-wrap: anywhere; }
+.node h4 { font-size: 20px; }
+.node .tags { margin-top: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.node:not(:last-child)::after { content: ""; position: absolute; right: calc(-1 * var(--s-3) - 1px); top: 50%; width: var(--s-3); height: 2px; background: var(--teal); }
+.node.bridge { border-style: dashed; }
+
+.two { display: grid; grid-template-columns: 1.1fr 1fr; gap: var(--s-5); margin-top: var(--s-5); }
+.steps { list-style: none; counter-reset: s; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 32px 1fr; gap: var(--s-3); font-size: 15px; }
+.steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; background: var(--teal-muted); color: var(--teal-dark); font-weight: 600; font-size: 13px; display: grid; place-items: center; }
+.steps b { color: var(--ink); font-weight: 600; }
+.callout { border-left: 3px solid var(--gold); background: var(--gold-muted); border-radius: 0 var(--r-2) var(--r-2) 0; padding: var(--s-4) var(--s-5); font-size: 14px; color: var(--ink-soft); }
+.callout b { color: var(--ink); }
+
+/* ---------- screens ---------- */
+.toggle { display: inline-flex; background: var(--white); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 4px; margin-bottom: var(--s-5); }
+.toggle button { border: 0; background: transparent; font-size: 14px; font-weight: 600; color: var(--ink-soft); padding: 12px 20px; min-height: 44px; border-radius: var(--r-pill); cursor: pointer; transition: all var(--dur-base) var(--ease-out); }
+.toggle button[aria-pressed="true"] { background: var(--teal); color: var(--white); box-shadow: var(--shadow-sm); }
+.screens-note { font-size: 13px; color: var(--ink-muted); margin-bottom: var(--s-5); max-width: 720px; }
+.screens { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--s-5); }
+.shot figcaption { margin-top: var(--s-3); font-size: 13px; color: var(--ink-muted); }
+.shot figcaption b { color: var(--ink); font-weight: 600; display: block; font-size: 14px; }
+.browser { border: 1px solid var(--border); border-radius: var(--r-3); overflow: hidden; background: var(--white); box-shadow: var(--shadow-sm); }
+.bar { display: flex; align-items: center; gap: 6px; padding: 9px 12px; background: var(--surface-tint); border-bottom: 1px solid var(--border-soft); }
+.bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.bar span { margin-left: 8px; font-size: 11px; color: var(--ink-muted); font-family: ui-monospace, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* the frame: two skins driven by variables */
+.frame { --f-bg:#f7f8fa; --f-card:#ffffff; --f-bd:#e5e7eb; --f-tx:#1f2937; --f-mu:#4b5563; --f-pr:#0f766e; --f-sel:#ecfdf5; --f-r:12px; --f-br:10px;
+  --f-font:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; --f-hf:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif; --f-hw:700; --f-eb-ls:0.04em;
+  background: var(--f-bg); color: var(--f-tx); font-family: var(--f-font); padding: 12px; display: grid; gap: 10px; font-size: 12px; line-height: 1.45; height: 440px; overflow: hidden; align-content: start; transition: background var(--dur-base); }
+.screens[data-mode="brand"] .frame { --f-bg:var(--surface); --f-card:var(--white); --f-bd:var(--border); --f-tx:var(--ink-soft); --f-mu:var(--ink-muted); --f-pr:var(--teal); --f-sel:var(--teal-tint); --f-r:14px; --f-br:999px;
+  --f-font:var(--font-body); --f-hf:var(--font-display); --f-hw:700; --f-eb-ls:0.18em; }
+.f-card { background: var(--f-card); border: 1px solid var(--f-bd); border-radius: var(--f-r); padding: 12px; display: grid; gap: 7px; }
+.f-eb { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: var(--f-eb-ls); color: var(--f-mu); }
+.screens[data-mode="brand"] .f-eb { color: var(--teal); }
+.f-h1 { font-family: var(--f-hf); font-size: 21px; line-height: 1.1; font-weight: var(--f-hw); color: var(--f-tx); margin: 0; }
+.screens[data-mode="brand"] .f-h1 { color: var(--ink); font-size: 25px; }
+.f-h3 { font-family: var(--f-hf); font-size: 14px; line-height: 1.25; font-weight: var(--f-hw); color: var(--f-tx); margin: 0; }
+.screens[data-mode="brand"] .f-h3 { color: var(--ink); font-size: 16px; }
+.f-p { margin: 0; color: var(--f-tx); font-size: 11.5px; }
+.f-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.f-sp { justify-content: space-between; }
+.f-btn { font-size: 11px; font-weight: 600; border: 1px solid var(--f-pr); background: var(--f-pr); color: #fff; border-radius: var(--f-br); padding: 6px 11px; font-family: var(--f-font); }
+.f-btn.sec { background: var(--f-card); color: var(--f-pr); }
+.f-opt { display: flex; gap: 7px; align-items: flex-start; border: 1px solid var(--f-bd); border-radius: 8px; padding: 6px 8px; font-size: 11px; }
+.f-opt::before { content: ""; flex: none; width: 10px; height: 10px; margin-top: 2px; border-radius: 50%; border: 1.5px solid var(--f-mu); }
+.f-opt.sel { border-color: var(--f-pr); background: var(--f-sel); }
+.f-opt.sel::before { background: var(--f-pr); border-color: var(--f-pr); box-shadow: inset 0 0 0 2px var(--f-sel); }
+.f-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--f-pr); opacity: .85; flex: none; }
+.f-tag { font-size: 9px; border: 1px dashed var(--f-mu); color: var(--f-mu); border-radius: 999px; padding: 1px 7px; }
+.t-brand { display: none; }
+.screens[data-mode="brand"] .t-brand { display: inline; }
+.screens[data-mode="brand"] .t-legacy { display: none; }
+.fade { position: relative; }
+.fade::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: linear-gradient(to bottom, transparent, var(--f-bg)); pointer-events: none; }
+
+/* ---------- architecture ---------- */
+.arch { display: grid; gap: var(--s-4); }
+.layer { border: 1px solid var(--border); border-radius: var(--r-3); background: var(--white); padding: var(--s-5); position: relative; }
+.layer > .lab { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-4); }
+.layer > .lab h4 { font-size: 22px; }
+.layer.wait { border-style: dashed; background: var(--surface-tint); }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.chip { font-size: 13px; padding: 8px 12px; border-radius: var(--r-2); background: var(--surface); border: 1px solid var(--border); color: var(--ink); line-height: 1.3; }
+.chip small { display: block; font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+.chip.built { background: var(--teal-tint); border-color: rgba(0,144,144,.25); }
+.chip.plan { background: var(--gold-muted); border-color: var(--gold-light); }
+.chip.wait { background: transparent; border: 1px dashed var(--ink-muted); }
+.arrow { text-align: center; color: var(--teal); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: var(--s-3); }
+.arrow::before, .arrow::after { content: ""; height: 1px; flex: 1; background: linear-gradient(to right, transparent, var(--teal)); max-width: 120px; }
+.arrow::after { transform: scaleX(-1); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--s-3); }
+.mod { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-2); padding: var(--s-4); }
+.mod h5 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 var(--s-2); }
+.mod ul { margin: 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--ink-soft); display: grid; gap: 3px; }
+.mod li code { font-size: 11.5px; padding: 0 4px; }
+.mod .note { font-size: 11.5px; color: var(--ink-muted); margin-top: var(--s-2); }
+
+/* ---------- data model ---------- */
+.group { margin-bottom: var(--s-7); }
+.group h4 { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-4); flex-wrap: wrap; }
+.tables { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: var(--s-3); }
+.tbl { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); border-top: 3px solid var(--teal); }
+.tbl.plan { border-top-color: var(--gold); background: var(--surface-tint); border-style: dashed; border-top-style: solid; }
+.tbl h5 { font-family: ui-monospace, Menlo, monospace; font-size: 13.5px; font-weight: 600; color: var(--ink); margin: 0 0 var(--s-2); }
+.tbl p { font-size: 12.5px; color: var(--ink-muted); line-height: 1.5; }
+.tbl .f { margin-top: var(--s-2); font-size: 11.5px; color: var(--ink-soft); line-height: 1.7; }
+.tbl .f span { background: var(--surface); border-radius: 4px; padding: 1px 5px; margin-right: 3px; white-space: nowrap; display: inline-block; }
+
+/* ---------- framework ---------- */
+.fw { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+.viz { padding: var(--s-5); }
+.viz h4 { margin-bottom: var(--s-2); }
+.viz .cap { font-size: 13px; color: var(--ink-muted); margin-bottom: var(--s-4); }
+.viz svg { width: 100%; height: auto; display: block; max-width: 520px; margin: 0 auto; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); cursor: pointer; min-height: 44px; }
+.switch input { width: 18px; height: 18px; accent-color: var(--teal); }
+.pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--s-4); }
+.pillar { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-3); padding: var(--s-5); border-top: 4px solid var(--pc); }
+.pillar header { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-3); }
+.pillar .ltr { width: 34px; height: 34px; border-radius: 50%; background: var(--pc); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 15px; flex: none; }
+.pillar h4 { font-size: 21px; line-height: 1.15; }
+.pillar .cnt { font-size: 12px; color: var(--ink-muted); }
+.pillar .frame-t { font-size: 13px; color: var(--ink-soft); margin: var(--s-2) 0 var(--s-3); }
+.cats { display: grid; gap: 6px; }
+.cat { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); background: var(--surface-tint); border: 1px solid var(--border-soft); border-radius: var(--r-2); padding: 7px 10px; }
+.cat code { background: transparent; border: 0; color: var(--pc); font-weight: 600; padding: 0; min-width: 56px; }
+.bars { display: grid; gap: var(--s-6); }
+.bar-lab { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--s-2); font-size: 13px; margin-bottom: var(--s-2); color: var(--ink-soft); }
+.bar-lab b { color: var(--ink); font-weight: 600; }
+.seg { display: flex; height: 54px; border-radius: var(--r-2); overflow: hidden; border: 1px solid var(--border); }
+.seg div { display: grid; place-items: center; text-align: center; font-size: 11.5px; font-weight: 600; line-height: 1.2; padding: 2px; }
+.seg small { display: block; font-weight: 500; opacity: .85; font-size: 10.5px; }
+.dir { font-size: 12px; color: var(--ink-muted); margin-top: var(--s-2); display: flex; justify-content: space-between; }
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border-soft); color: var(--ink-soft); vertical-align: top; }
+td b { color: var(--ink); font-weight: 600; }
+tr.pend td { color: var(--ink-muted); }
+.ov { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--s-3); }
+.ovc { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-2); padding: var(--s-4); }
+.ovc h5 { font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 6px; }
+.ovc .e { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.ovc .e code { font-size: 11px; }
+.ovc .req { font-size: 11.5px; color: var(--gold-dark); margin-top: 8px; }
+
+/* ---------- roadmap ---------- */
+.road { display: grid; gap: var(--s-3); }
+.rs { display: grid; grid-template-columns: 56px 1fr auto; gap: var(--s-4); align-items: start; background: var(--white); border: 1px solid var(--border); border-radius: var(--r-3); padding: var(--s-4) var(--s-5); }
+.rs .num { font-family: var(--font-display); font-size: 38px; line-height: 1; font-weight: 700; color: var(--ink-faint); }
+.rs.done { border-left: 4px solid var(--teal); } .rs.done .num { color: var(--teal); }
+.rs.next { border-left: 4px solid var(--gold); background: var(--gold-muted); } .rs.next .num { color: var(--gold-dark); }
+.rs h5 { font-family: var(--font-body); font-size: 16px; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+.rs p { font-size: 14px; color: var(--ink-soft); }
+.rs .needs { font-size: 12.5px; color: var(--ink-muted); margin-top: 6px; }
+.rs .needs b { color: var(--ink); font-weight: 600; }
+
+.issues { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--s-4); }
+.ic { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-3); padding: var(--s-5); }
+.ic h4 { font-size: 22px; margin-bottom: var(--s-3); }
+.ic ul { margin: 0; padding-left: 18px; display: grid; gap: var(--s-2); font-size: 14px; color: var(--ink-soft); }
+.ic li::marker { color: var(--teal); }
+
+footer { padding: var(--s-7) 0 var(--s-8); font-size: 13px; color: var(--ink-muted); border-top: 1px solid var(--border); }
+
+@media (max-width: 960px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .flow { grid-template-columns: repeat(2, 1fr); }
+  .node:not(:last-child)::after { display: none; }
+  .two, .fw { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .mmm-section { padding: var(--s-8) 0; }
+  .hero { padding-top: var(--s-7); }
+  .rs { grid-template-columns: 40px 1fr; } .rs .badge { grid-column: 2; justify-self: start; }
+  .rs .num { font-size: 30px; }
+  .brand { font-size: 17px; }
+}
+@media (max-width: 480px) { .stats, .flow { grid-template-columns: 1fr; } .viz { overflow-x: auto; } .viz svg { min-width: 460px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body class="mmm-grain">
+
+<nav class="nav" id="nav">
+  <div class="mmm-container nav-in">
+    <div class="brand">Muscle-Meta Matrix™ <span>build reference</span></div>
+    <div class="nav-links">
+      <a href="#status">Status</a><a href="#journey">User journey</a><a href="#screens">Screens</a><a href="#architecture">Architecture</a><a href="#data">Data model</a><a href="#framework">Framework</a><a href="#roadmap">Roadmap</a><a href="#open">Open items</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="status">
+  <div class="mmm-container">
+    <span class="eyebrow">Build reference · 4 October 2026</span>
+    <h1>The score app, <em>as built today</em></h1>
+    <p class="lede">A working assessment skeleton with a solid scoring backend and a complete framework reference layer. No live backend is connected yet, and the interface is still on placeholder styling. This page maps what exists, what comes next, and what is waiting on a decision or a key from you.</p>
+    <div class="meta">
+      <span>Branch <code>claude/muscle-meta-score-overview-q1ure1</code></span>
+      <span>Head <code>045db3e</code></span>
+      <span>Base <code>main</code> <code>3b8d7c8</code></span>
+      <span>Stack <b>React 18 · Vite · TypeScript · Convex · Clerk · Netlify</b></span>
+    </div>
+
+    <div class="stats">
+      <div class="mmm-card stat"><div class="n">27</div><div class="l">Convex functions</div><div class="s">queries and mutations across 7 modules</div></div>
+      <div class="mmm-card stat"><div class="n">19</div><div class="l">Tables defined</div><div class="s">8 app tables + 11 framework tables</div></div>
+      <div class="mmm-card stat"><div class="n">2</div><div class="l">Assessments in code</div><div class="s">Catabolic screen (4 questions) · Functional scorecard (24)</div></div>
+      <div class="mmm-card stat"><div class="n zero">0</div><div class="l">Live deployments</div><div class="s">Convex project and Clerk app not yet created</div></div>
+    </div>
+
+    <div class="legend" aria-label="Status key">
+      <span><i class="i-built"></i>Built and type-checked</span>
+      <span><i class="i-plan"></i>Planned, designed</span>
+      <span><i class="i-wait"></i>Waiting on input from you</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== USER JOURNEY ===================== -->
+<section class="mmm-section" id="journey">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Route map</span><h2>One path, six screens</h2>
+      <p class="lede">The router in <code>src/app/router.tsx</code> defines this flow. Every assessment and results route sits behind a Clerk sign-in guard.</p></div>
+
+    <div class="flow">
+      <div class="mmm-card node"><span class="route">/</span><h4>Home</h4><p style="font-size:13px">Entry page. Sign in, or start the assessment.</p><div class="tags"><span class="badge b-pub">Public</span><span class="badge b-built">Built</span></div></div>
+      <div class="mmm-card node"><span class="route">/sign-in</span><h4>Sign in</h4><p style="font-size:13px">Clerk-hosted sign-in component.</p><div class="tags"><span class="badge b-pub">Public</span><span class="badge b-wait">Needs keys</span></div></div>
+      <div class="mmm-card node"><span class="route">/assessment/catabolic-crisis</span><h4>Catabolic screen</h4><p style="font-size:13px">4 questions on one page. Scored into 4 bands.</p><div class="tags"><span class="badge b-auth">Signed in</span><span class="badge b-built">Built</span></div></div>
+      <div class="mmm-card node"><span class="route">/assessment/functional-scorecard</span><h4>Functional scorecard</h4><p style="font-size:13px">24 questions, one per step, across 12 categories.</p><div class="tags"><span class="badge b-auth">Signed in</span><span class="badge b-built">Built</span></div></div>
+      <div class="mmm-card node"><span class="route">/results/:submissionId</span><h4>Results</h4><p style="font-size:13px">Catabolic card, functional card, focus areas.</p><div class="tags"><span class="badge b-auth">Signed in</span><span class="badge b-built">Built</span></div></div>
+      <div class="mmm-card node"><span class="route">/dashboard</span><h4>Dashboard</h4><p style="font-size:13px">List of the last 20 saved results. No charts yet.</p><div class="tags"><span class="badge b-auth">Signed in</span><span class="badge b-plan">Basic</span></div></div>
+    </div>
+
+    <div class="two">
+      <div class="mmm-card">
+        <h4 style="margin-bottom:var(--s-4)">What happens when you submit</h4>
+        <ol class="steps">
+          <li><div><b>startSubmission</b> opens a record for the survey slug, with device type and source.</div></li>
+          <li><div><b>saveResponse</b> runs once per question and upserts, so going back and changing an answer is safe.</div></li>
+          <li><div><b>completeSubmission</b> stamps the submission as completed.</div></li>
+          <li><div><b>scoreCatabolicCrisis</b> or <b>scoreFunctionalScorecard</b> scores on the server, writes a result row and a pathway row, and returns the payload.</div></li>
+          <li><div>The page navigates to the next screen. Scoring never runs in the browser.</div></li>
+        </ol>
+      </div>
+      <div style="display:grid;gap:var(--s-4);align-content:start">
+        <div class="mmm-card">
+          <h4 style="margin-bottom:var(--s-3)">Scoring rules already live</h4>
+          <p style="font-size:14px;margin-bottom:var(--s-3)"><b style="color:var(--ink)">Catabolic:</b> three scored questions (0–4 each), total 0–12. Bands: 0–1 no flag, 2–3 watch, 4–6 active recovery, 7+ high risk. Overrides lift the band when a single answer is severe, and a "more than one driver" answer with a total of 6 or more forces high risk.</p>
+          <p style="font-size:14px"><b style="color:var(--ink)">Functional:</b> 24 questions scored 1–5, total 24–120, five bands from high risk to resilient. Category and pillar roll-ups pick the weakest pillar and the lowest category.</p>
+        </div>
+        <div class="callout"><b>Worth knowing:</b> the catabolic result reaches the results page through <code>sessionStorage</code>, so that card disappears if the tab is closed. Moving it into the stored result is part of Step 3.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREENS ===================== -->
+<section class="mmm-section" id="screens" style="background:var(--surface-tint);border-block:1px solid var(--border-soft)">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Interface</span><h2>The five screens you can see today</h2>
+      <p class="lede">Reproduced from the real components and copy. Switch the skin to see the same layouts with the Muscle-Meta Matrix™ brand tokens applied.</p></div>
+
+    <div class="toggle" role="group" aria-label="Screen skin">
+      <button type="button" data-mode="legacy" aria-pressed="true">As built</button>
+      <button type="button" data-mode="brand" aria-pressed="false">Brand direction (preview)</button>
+    </div>
+    <p class="screens-note" id="screensNote">As built: placeholder styling from <code>src/styles/global.css</code>. A system font, a generic gray palette, and a teal that is not the brand teal. Result values shown are sample data.</p>
+
+    <div class="screens" id="screens-grid" data-mode="legacy">
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>/</span></div>
+          <div class="frame">
+            <div class="f-card">
+              <div class="f-row f-sp"><span class="f-eb">Muscle-Meta V1</span><span class="f-avatar"></span></div>
+              <h1 class="f-h1"><span class="t-legacy">Assessment App</span><span class="t-brand">Your muscle-meta assessment</span></h1>
+              <p class="f-p">Start with the Catabolic Crisis Screen, continue through the full Functional Decline Scorecard, then review your personalized results.</p>
+              <div class="f-row"><span class="f-btn"><span class="t-legacy">Start Assessment</span><span class="t-brand">Take the assessment</span></span><span class="f-btn sec"><span class="t-legacy">View Dashboard</span><span class="t-brand">View your dashboard</span></span></div>
+            </div>
+          </div></div>
+        <figcaption><b>Home</b>Signed-in view. Signed-out visitors see a single "Sign In to Start" button.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>/assessment/catabolic-crisis</span></div>
+          <div class="frame fade">
+            <div class="f-card"><span class="f-eb">Step 1 of 2</span><h1 class="f-h1">Catabolic Crisis Screen</h1><p class="f-p">Detects recent or active catabolic stress patterns before the main Functional Decline &amp; Muscle Risk Scorecard.</p></div>
+            <div class="f-card"><span class="f-eb">Question 1</span><h3 class="f-h3">Have you had, or are you expecting, a medical event that significantly reduces your normal activity?</h3>
+              <div class="f-opt">No major illness, injury, hospitalization, or surgery recently or coming up soon</div>
+              <div class="f-opt sel">Minor illness or outpatient procedure with less than 1 week of reduced activity</div>
+              <div class="f-opt">Illness, injury, or surgery causing about 1–2 weeks of reduced activity</div>
+            </div>
+          </div></div>
+        <figcaption><b>Catabolic Crisis Screen</b>All four questions render on one scrolling page, then one button continues to the scorecard.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>/assessment/functional-scorecard</span></div>
+          <div class="frame">
+            <div class="f-card"><span class="f-eb">Step 2 of 2</span><h1 class="f-h1">Functional Decline &amp; Muscle Risk Scorecard</h1><p class="f-p">Question 13 of 24</p></div>
+            <div class="f-card"><span class="f-eb">Question 13</span><h3 class="f-h3">How would you rate your current strength for lifting, carrying, rising from a chair, or getting off the floor?</h3>
+              <div class="f-opt">Severe limitation / never / very poor</div>
+              <div class="f-opt">Significant limitation / rarely</div>
+              <div class="f-opt sel">Moderate / sometimes</div>
+              <div class="f-opt">Mild limitation / usually</div>
+            </div>
+            <div class="f-row f-sp"><span class="f-btn sec">Previous</span><span class="f-btn"><span class="t-legacy">Next Question</span><span class="t-brand">Next question</span></span></div>
+          </div></div>
+        <figcaption><b>Functional scorecard</b>One question per step, with a Likert 1–5 scale, saved on every Next.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>/results/:submissionId</span></div>
+          <div class="frame fade">
+            <div class="f-card"><span class="f-eb">Results</span><h1 class="f-h1"><span class="t-legacy">Your Muscle-Meta Summary</span><span class="t-brand">Your muscle-meta summary</span></h1></div>
+            <div class="f-card"><h3 class="f-h3">Catabolic Stress Watch</h3><p class="f-p">Catabolic score: 2</p>
+              <div class="f-row"><span class="f-btn">Start My Muscle Preservation Plan</span></div></div>
+            <div class="f-card"><h3 class="f-h3">Early functional decline pattern</h3><p class="f-p">Functional score: 72 | Weakest pillar: recovery_stress</p>
+              <div class="f-row"><span class="f-btn">Start My Recovery Reset</span></div></div>
+          </div></div>
+        <figcaption><b>Results</b>Sample values. Note the raw key <code>recovery_stress</code> shown as the weakest pillar, not its label.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>/dashboard</span></div>
+          <div class="frame fade">
+            <div class="f-card"><div class="f-row f-sp"><h1 class="f-h1">Dashboard</h1><span class="f-avatar"></span></div><p class="f-p">Saved, user-linked results from Convex.</p>
+              <div class="f-row"><span class="f-btn"><span class="t-legacy">Start New Assessment</span><span class="t-brand">Start a new assessment</span></span><span class="f-btn sec">Back Home</span></div></div>
+            <div class="f-card"><span class="f-eb">10/2/2026, 9:14 AM</span><h3 class="f-h3">Early functional decline pattern</h3><p class="f-p">Score: 72 | Band: Early functional decline pattern</p><div class="f-row"><span class="f-btn">Open Result</span></div></div>
+          </div></div>
+        <figcaption><b>Dashboard today</b>A plain list of past results. The radar, pentagon and tier badge arrive in Step 7.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>any route, no env keys</span></div>
+          <div class="frame">
+            <div class="f-card"><h1 class="f-h1"><span class="t-legacy">Missing Environment Variables</span><span class="t-brand">Missing environment variables</span></h1><p class="f-p">Add `VITE_CONVEX_URL` and `VITE_CLERK_PUBLISHABLE_KEY` to run the authenticated app.</p></div>
+            <div class="f-row"><span class="f-tag">what every route shows until the keys exist</span></div>
+          </div></div>
+        <figcaption><b>The guard screen</b>With no Convex or Clerk keys, the provider wrapper blocks the whole app, including the public home page.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ARCHITECTURE ===================== -->
+<section class="mmm-section" id="architecture">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">System</span><h2>Four layers, two of them unplugged</h2>
+      <p class="lede">Code exists for every layer. The two dashed ones need a Convex project and a Clerk application before anything runs end to end.</p></div>
+
+    <div class="arch">
+      <div class="layer">
+        <div class="lab"><h4>Browser · React PWA</h4><span class="badge b-built">Built</span></div>
+        <div class="cols">
+          <div class="mod"><h5>Pages</h5><ul><li>HomePage · SignInPage</li><li>CatabolicQuizPage</li><li>FunctionalScorecardPage</li><li>ResultPage · DashboardPage</li></ul></div>
+          <div class="mod"><h5>Components and hooks</h5><ul><li><code>SurveyQuestionCard</code></li><li><code>ResultSummaryCard</code></li><li><code>ProtectedRoute</code></li><li><code>useCurrentAppUser</code></li></ul></div>
+          <div class="mod"><h5>PWA shell</h5><ul><li>vite-plugin-pwa, service worker</li><li>Web manifest and icons</li><li>Installable on mobile</li></ul></div>
+          <div class="mod"><h5>Not yet in the browser</h5><ul><li>Brand tokens and fonts</li><li>Radar and pentagon charts</li><li>Dashboard rollup view</li></ul></div>
+        </div>
+      </div>
+
+      <div class="arrow">signed requests</div>
+
+      <div class="layer wait">
+        <div class="lab"><h4>Clerk · sign-in and identity</h4><span class="badge b-wait">Needs your keys</span></div>
+        <div class="chips"><div class="chip built">ClerkProvider wired<small>AppProviders.tsx</small></div><div class="chip built">Convex JWT auth config<small>convex/auth.config.ts</small></div><div class="chip wait">Application not created<small>needs publishable key, secret key, issuer domain</small></div></div>
+      </div>
+
+      <div class="arrow">authenticated calls</div>
+
+      <div class="layer wait">
+        <div class="lab"><h4>Convex · database and server functions</h4><span class="badge b-wait">Needs a deploy key</span></div>
+        <div class="cols">
+          <div class="mod"><h5>Assessment engine</h5><ul><li><code>surveys</code> seed, fetch</li><li><code>submissions</code> start, save, complete</li><li><code>results</code> two scorers, two reads</li></ul></div>
+          <div class="mod"><h5>People and pathways</h5><ul><li><code>users</code> upsert on sign-in</li><li><code>pathways</code> assign, list</li></ul></div>
+          <div class="mod"><h5>Framework layer</h5><ul><li><code>seedFramework</code> idempotent seed</li><li><code>framework</code> 12 read queries</li></ul><p class="note">Added in Step 1</p></div>
+          <div class="mod"><h5>Generated code</h5><ul><li>Hand-written stubs in <code>_generated/</code></li><li>Replaced by real codegen on first <code>convex dev</code></li></ul></div>
+        </div>
+      </div>
+
+      <div class="arrow">seeded from</div>
+
+      <div class="layer">
+        <div class="lab"><h4>Content in <code>/config</code></h4><span class="badge b-built">Built</span></div>
+        <div class="chips">
+          <div class="chip built"><code>survey-schema.json</code><small>2 surveys, 28 questions, scoring bands</small></div>
+          <div class="chip built"><code>pathway-cta-map.json</code><small>13 pathways with labels and targets</small></div>
+          <div class="chip built"><code>framework-taxonomy.json</code><small>pillars, categories, GMMBB, tiers, patterns</small></div>
+        </div>
+      </div>
+
+      <div class="layer wait" style="margin-top:var(--s-3)">
+        <div class="lab"><h4>Netlify · hosting</h4><span class="badge b-wait">Not deployed</span></div>
+        <div class="chips"><div class="chip built">netlify.toml present<small>build <code>npm run build</code>, publish <code>dist</code>, SPA redirect</small></div><div class="chip wait">No site connected<small>needs the Convex URL and Clerk key as environment variables</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DATA MODEL ===================== -->
+<section class="mmm-section" id="data" style="background:var(--surface-tint);border-block:1px solid var(--border-soft)">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Convex schema</span><h2>Nineteen tables today, six more planned</h2>
+      <p class="lede">The goal is one pipeline that carries any number of assessments, short or comprehensive. Step 1 added the reference layer; Steps 2 to 5 extend the assessment, result and dashboard tables on top of it.</p></div>
+
+    <div class="group"><h4>Assessment engine <span class="badge b-built">Built · 8 tables</span></h4>
+      <div class="tables">
+        <div class="tbl"><h5>users</h5><p>One row per Clerk user.</p><div class="f"><span>externalAuthId</span><span>email</span><span>ageRange</span><span>marketingOptIn</span></div></div>
+        <div class="tbl"><h5>surveys</h5><p>Assessment definitions.</p><div class="f"><span>slug</span><span>version</span><span>status</span><span>type</span></div></div>
+        <div class="tbl"><h5>surveyQuestions</h5><p>Ordered questions, tagged to a category and pillar.</p><div class="f"><span>questionId</span><span>order</span><span>isScored</span><span>categoryKey</span><span>pillarKey</span></div></div>
+        <div class="tbl"><h5>surveyOptions</h5><p>Answer choices with scores.</p><div class="f"><span>optionId</span><span>score</span><span>pathwayHint</span></div></div>
+        <div class="tbl"><h5>surveySubmissions</h5><p>One attempt by one user.</p><div class="f"><span>userId</span><span>submissionStatus</span><span>startedAt</span><span>deviceType</span></div></div>
+        <div class="tbl"><h5>surveyResponses</h5><p>One answer per question per attempt.</p><div class="f"><span>questionId</span><span>selectedOptionId</span><span>score</span></div></div>
+        <div class="tbl"><h5>surveyResults</h5><p>Scored outcome with an open payload.</p><div class="f"><span>resultType</span><span>totalScore</span><span>riskBandKey</span><span>payload</span></div></div>
+        <div class="tbl"><h5>userPathways</h5><p>The pathway assigned from a result.</p><div class="f"><span>pathwayKey</span><span>pathwayType</span><span>priorityRank</span></div></div>
+      </div></div>
+
+    <div class="group"><h4>Framework reference layer <span class="badge b-built">Built · 11 tables · Step 1</span></h4>
+      <div class="tables">
+        <div class="tbl"><h5>frameworkVersions</h5><p>Which taxonomy version is current (v2.1.0).</p></div>
+        <div class="tbl"><h5>pillars</h5><p>4 rows. Colour, icon, radar letter and angle.</p><div class="f"><span>pillarKey</span><span>radarAngleDeg</span><span>categoryCount</span></div></div>
+        <div class="tbl"><h5>categories</h5><p>12 rows, ids P1-C1 to P4-C12.</p><div class="f"><span>categoryId</span><span>pillarKey</span><span>globalOrder</span></div></div>
+        <div class="tbl"><h5>constructs</h5><p>9 measurable constructs scored inside a category.</p></div>
+        <div class="tbl"><h5>gmmbbAxes</h5><p>5 axes with weights that sum to 100.</p></div>
+        <div class="tbl"><h5>modifyingFactors</h5><p>6 factors. Never shown as pillars.</p></div>
+        <div class="tbl"><h5>populationOverlays</h5><p>6 overlays that re-weight categories and stack.</p></div>
+        <div class="tbl"><h5>convergencePatterns</h5><p>11 ids. 5 named, 6 awaiting the canonical registry.</p></div>
+        <div class="tbl"><h5>crossCuttingNodes</h5><p>Defined, seeded empty until the registry arrives.</p></div>
+        <div class="tbl"><h5>riskTiers</h5><p>MM Health Score tiers. 0 to 100, higher is better.</p></div>
+        <div class="tbl"><h5>clinicalRiskBands</h5><p>Raw instrument bands. Percent of max, higher is worse.</p></div>
+      </div></div>
+
+    <div class="group"><h4>Planned, Steps 2 to 5 <span class="badge b-plan">Designed · 6 tables</span></h4>
+      <div class="tables">
+        <div class="tbl plan"><h5>assessmentTypes</h5><p>One row per assessment: family, short or comprehensive, scoring direction, minutes.</p></div>
+        <div class="tbl plan"><h5>userHealthProfile</h5><p>One row per person, rebuilt after every scored assessment. The dashboard reads only this.</p><div class="f"><span>currentPillarScores</span><span>currentGmmbbScores</span><span>mmHealthScore</span><span>activeOverlayKeys</span></div></div>
+        <div class="tbl plan"><h5>userOverlays</h5><p>Which overlays are active for a person, and whether self-reported or inferred.</p></div>
+        <div class="tbl plan"><h5>contentCatalog</h5><p>Mini-courses, courses, posts, tools and handouts, tagged to pillar, category, tier and overlay.</p></div>
+        <div class="tbl plan"><h5>recommendations</h5><p>Ranked, explainable next steps generated from a result.</p></div>
+        <div class="tbl plan"><h5>Extended result fields</h5><p>surveyResults gains structured pillar, category, construct and GMMBB scores plus pattern flags.</p></div>
+      </div></div>
+  </div>
+</section>
+
+<!-- ===================== FRAMEWORK ===================== -->
+<section class="mmm-section" id="framework">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Muscle-Meta Matrix™</span><h2>The framework the app is built around</h2>
+      <p class="lede">Everything in this section is drawn from <code>config/framework-taxonomy.json</code>, the same file the Convex seed reads. All four pillars and all twelve categories are visible; nothing is locked.</p></div>
+
+    <div class="fw">
+      <div class="mmm-card viz">
+        <h4>Four-pillar matrix</h4>
+        <p class="cap">Diamond orientation: E top, N right, R bottom, B left. Scored and drawn at pillar level, with a 5-2-3-2 category split underneath.</p>
+        <svg id="radar" viewBox="-80 -24 580 470" role="img" aria-label="Four pillar matrix diagram"></svg>
+        <label class="switch"><input type="checkbox" id="sample"> Show an illustrative sample profile (not real data)</label>
+      </div>
+      <div class="mmm-card viz">
+        <h4>GMMBB axis</h4>
+        <p class="cap">The diagnostic lens, drawn as a pentagon: Gut, Muscle, Metabolic, Bone, Brain. Larger discs carry more weight.</p>
+        <svg id="penta" viewBox="-70 -10 560 450" role="img" aria-label="GMMBB pentagon diagram"></svg>
+      </div>
+    </div>
+
+    <div class="pillars" id="pillars" style="margin-top:var(--s-5)"></div>
+
+    <div class="mmm-card" style="margin-top:var(--s-5);padding:var(--s-6)">
+      <h4 style="margin-bottom:var(--s-2)">Two risk scales that never mix</h4>
+      <p class="cap" style="font-size:14px;color:var(--ink-muted);margin-bottom:var(--s-5)">The consumer score and the clinical instrument scale run in opposite directions, so they live in separate tables and must never share a label or a screen.</p>
+      <div class="bars">
+        <div><div class="bar-lab"><span><b>MM Health Score</b> · consumer-facing · 0 to 100</span><span>higher is better</span></div><div class="seg" id="tiers"></div><div class="dir"><span>0</span><span>100</span></div></div>
+        <div><div class="bar-lab"><span><b>Clinical risk bands</b> · raw instruments such as CCRAF · percent of max score</span><span>higher is worse</span></div><div class="seg" id="bands"></div><div class="dir"><span>0%</span><span>100%</span></div></div>
+      </div>
+    </div>
+
+    <div class="fw" style="margin-top:var(--s-5)">
+      <div class="mmm-card" style="padding:var(--s-6)">
+        <h4 style="margin-bottom:var(--s-2)">Convergence patterns</h4>
+        <p class="cap" style="font-size:14px;color:var(--ink-muted);margin-bottom:var(--s-4)">Co-occurrence signatures. Five have canonical names; six are placeholders until the registry is supplied.</p>
+        <div class="tbl-wrap"><table><thead><tr><th>Id</th><th>Canonical name</th><th>Status</th></tr></thead><tbody id="cps"></tbody></table></div>
+      </div>
+      <div class="mmm-card" style="padding:var(--s-6)">
+        <h4 style="margin-bottom:var(--s-2)">Modifying factors</h4>
+        <p class="cap" style="font-size:14px;color:var(--ink-muted);margin-bottom:var(--s-4)">Influence category scores. Never displayed as extra pillars.</p>
+        <div class="tbl-wrap"><table><thead><tr><th>Factor</th><th>Applies to</th></tr></thead><tbody id="mfs"></tbody></table></div>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin:var(--s-7) 0 var(--s-5)"><h4>Population overlays</h4>
+      <p class="lede" style="font-size:16px;margin-top:var(--s-2)">Overlays re-weight categories for a person. They add no pillars, and they stack.</p></div>
+    <div class="ov" id="overlays"></div>
+  </div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section class="mmm-section" id="roadmap" style="background:var(--surface-tint);border-block:1px solid var(--border-soft)">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Plan</span><h2>Nine steps from skeleton to personal dashboard</h2>
+      <p class="lede">Step 1 is complete and pushed. Step 2 can begin as soon as you say so; the live-deployment steps wait on keys.</p></div>
+    <div class="road">
+      <div class="rs done"><div class="num">1</div><div><h5>Seed the framework reference layer</h5><p>11 tables, seed mutation, 12 read queries, typed frontend models, design record. Canon corrections of 16 September applied: nothing gated, categories numbered C1 to C12.</p><div class="needs"><b>Open:</b> convergence patterns CP-03 and CP-07 to CP-11, and the cross-cutting nodes, need the canonical registries.</div></div><span class="badge b-built">Complete</span></div>
+      <div class="rs next"><div class="num">2</div><div><h5>Migrate the assessment, submission and result tables</h5><p>Add <code>assessmentTypes</code>, tag questions to category, construct and GMMBB axis, and give results structured score fields so any assessment carries the same shape.</p><div class="needs"><b>Needs:</b> nothing external. Ready to start.</div></div><span class="badge b-plan">Next</span></div>
+      <div class="rs"><div class="num">3</div><div><h5>One generic scoring engine</h5><p>Replace the two hand-written scorers with a single configurable one. Move the catabolic result out of <code>sessionStorage</code>. Regression-match today's outputs.</p></div><span class="badge b-plan">Planned</span></div>
+      <div class="rs"><div class="num">4</div><div><h5>Package the 11 assessments as content</h5><p>Convert CRA, GMMBB, GLP-1, Pickleball, Post-Hospital, VILPA, CCRAF, MFAT, Bone Health, Brain-Muscle and 4P-MMA into config.</p><div class="needs"><b>Needs:</b> your clinical review of scoring bands, and the full question banks (the 4P-MMA file in the skill is a stub).</div></div><span class="badge b-plan">Planned</span></div>
+      <div class="rs"><div class="num">5</div><div><h5>Dashboard rollup</h5><p>Rebuild <code>userHealthProfile</code> after every scored assessment: pillar, category and GMMBB scores, tier, overlays, active patterns.</p></div><span class="badge b-plan">Planned</span></div>
+      <div class="rs"><div class="num">6</div><div><h5>Clerk and entitlements</h5><p>Create the Clerk app, wire the JWT template and user sync. Entitlements attach to products such as a course or saved history, never to part of the framework.</p><div class="needs"><b>Needs:</b> Clerk publishable key, secret key and issuer domain. <b>Changed:</b> the earlier plan's Pillar 4 gating is withdrawn.</div></div><span class="badge b-wait">Needs keys</span></div>
+      <div class="rs"><div class="num">7</div><div><h5>Dashboard interface in the brand system</h5><p>Four-pillar matrix, GMMBB pentagon, tier badge, pattern callouts and next-step cards, replacing the placeholder styles.</p></div><span class="badge b-plan">Planned</span></div>
+      <div class="rs"><div class="num">8</div><div><h5>Recommendations and mini-course routing</h5><p>Fill the content catalog and generate ranked, explainable recommendations from each result.</p></div><span class="badge b-plan">Planned</span></div>
+      <div class="rs"><div class="num">9</div><div><h5>Deploy, test, expand</h5><p>Connect Netlify, add scoring tests, then add the remaining assessments one at a time.</p><div class="needs"><b>Needs:</b> a Convex deploy key for a new project.</div></div><span class="badge b-wait">Needs keys</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== OPEN ITEMS ===================== -->
+<section class="mmm-section" id="open">
+  <div class="mmm-container">
+    <div class="sec-head"><span class="eyebrow">Before it runs</span><h2>What is open, and who owns it</h2></div>
+    <div class="issues">
+      <div class="ic"><h4>Waiting on you</h4><ul>
+        <li>A Convex deploy key from a new project, or one interactive <code>npx convex dev</code> login.</li>
+        <li>Clerk publishable key, secret key and JWT issuer domain.</li>
+        <li><code>CONVERGENCE-PATTERNS.md</code> and <code>CROSS-CUTTING-NODES.md</code> from the canonical folder.</li>
+        <li>Clinical review of scoring bands before assessments ship.</li>
+      </ul></div>
+      <div class="ic"><h4>Gaps in the existing code</h4><ul>
+        <li>Result buttons point to <code>/pathways/…</code> routes that do not exist, so they redirect home.</li>
+        <li>Results show raw keys such as <code>recovery_stress</code> instead of labels.</li>
+        <li><code>seedSurveyContent</code> is never called, so a fresh database has no surveys.</li>
+        <li><code>pathwayLabel</code> stores the raw key instead of the label.</li>
+        <li><code>src/lib/scoring/</code> is unused and duplicates the server scoring.</li>
+        <li>No automated tests anywhere.</li>
+      </ul></div>
+      <div class="ic"><h4>Naming drift to reconcile</h4><ul>
+        <li><code>survey-schema.json</code> says <code>balance_brain</code>; the CTA map and framework say <code>balance_brain_health</code>. A TODO alias hides this in <code>results.ts</code>.</li>
+        <li>Survey categories do not yet carry the <code>P#-C#</code> ids, and list endurance before strength.</li>
+        <li>The branded interface is not applied anywhere yet.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="mmm-container">Muscle-Meta Matrix™ · Small Steps. Exponential Gains.™ · Reference page generated from the repository at commit <code>045db3e</code>. The framework section renders <code>config/framework-taxonomy.json</code> directly; counts elsewhere were read from the source files.</div>
+</footer>
+
+<script>
+const T = {"frameworkVersion": {"versionTag": "v2.1.0", "alignedDate": "2026-08-08", "sourceAuthority": "01-canonical/FRAMEWORK.md", "notes": "Seeded from the muscle-meta-design skill's references/framework.md implementation of the canonical kernel. Decisions reflected: D-001, D-003, D-006, D-007, D-009, D-010. Corrections applied 2026-09-16 per muscle-meta-design skill: nothing is gated (no gated pillar or category); categories numbered C1-C12 continuously with Strength=P1-C4, Endurance=P1-C5."}, "pillars": [{"pillarKey": "exercise_mobility", "label": "Exercise & Mobility", "colorHex": "#009090", "iconKind": "force", "radarLetter": "E", "radarAngleDeg": -90, "order": 1, "categoryCount": 5, "problemFraming": "Sarcopenia, mobility loss, force decline", "beliefNarrative": "The Power Lie", "clinicalTags": ["Sarcopenia", "VILPA Protocol", "Force Absorption", "VO2 Max", "Power Decline"]}, {"pillarKey": "nutrition_metabolism", "label": "Nutrition & Metabolism", "colorHex": "#D4AF37", "iconKind": "cellular", "radarLetter": "N", "radarAngleDeg": 0, "order": 2, "categoryCount": 2, "problemFraming": "Metabolic inflexibility, GLP-1 lean mass risk", "beliefNarrative": "The Fuel Betrayal", "clinicalTags": ["Metabolic Flex", "GLP-1 Risk", "Gut Microbiome", "Leucine Threshold", "Mito Output"]}, {"pillarKey": "recovery_stress", "label": "Recovery & Stress", "colorHex": "#7c3aed", "iconKind": "wave", "radarLetter": "R", "radarAngleDeg": 90, "order": 3, "categoryCount": 3, "problemFraming": "Catabolic cascade, cortisol dysregulation", "beliefNarrative": "The Invisible Crisis", "clinicalTags": ["Catabolic Risk", "Cortisol Load", "HRV Baseline", "Sleep Quality"]}, {"pillarKey": "balance_brain_health", "label": "Balance & Brain Health", "colorHex": "#16a34a", "iconKind": "neural", "radarLetter": "B", "radarAngleDeg": 180, "order": 4, "categoryCount": 2, "problemFraming": "Fall risk, fracture, cognitive decline, dual-task deficit", "beliefNarrative": "The Cognitive Cliff", "clinicalTags": ["Fall Risk", "Dual-Task", "Bone Reserve", "Cognitive Reserve"]}], "categories": [{"categoryKey": "joint_health", "categoryId": "P1-C1", "pillarKey": "exercise_mobility", "label": "Joint Health", "orderInPillar": 1, "globalOrder": 1}, {"categoryKey": "functional_independence", "categoryId": "P1-C2", "pillarKey": "exercise_mobility", "label": "Functional Independence", "orderInPillar": 2, "globalOrder": 2}, {"categoryKey": "mobility", "categoryId": "P1-C3", "pillarKey": "exercise_mobility", "label": "Mobility", "orderInPillar": 3, "globalOrder": 3}, {"categoryKey": "strength", "categoryId": "P1-C4", "pillarKey": "exercise_mobility", "label": "Strength", "orderInPillar": 4, "globalOrder": 4}, {"categoryKey": "endurance", "categoryId": "P1-C5", "pillarKey": "exercise_mobility", "label": "Endurance", "orderInPillar": 5, "globalOrder": 5}, {"categoryKey": "nutrition", "categoryId": "P2-C6", "pillarKey": "nutrition_metabolism", "label": "Nutrition", "orderInPillar": 1, "globalOrder": 6}, {"categoryKey": "metabolic_flexibility", "categoryId": "P2-C7", "pillarKey": "nutrition_metabolism", "label": "Metabolic Flexibility", "orderInPillar": 2, "globalOrder": 7}, {"categoryKey": "recovery", "categoryId": "P3-C8", "pillarKey": "recovery_stress", "label": "Recovery", "orderInPillar": 1, "globalOrder": 8}, {"categoryKey": "lifestyle", "categoryId": "P3-C9", "pillarKey": "recovery_stress", "label": "Lifestyle", "orderInPillar": 2, "globalOrder": 9}, {"categoryKey": "stress_management", "categoryId": "P3-C10", "pillarKey": "recovery_stress", "label": "Stress Management", "orderInPillar": 3, "globalOrder": 10}, {"categoryKey": "balance", "categoryId": "P4-C11", "pillarKey": "balance_brain_health", "label": "Balance", "orderInPillar": 1, "globalOrder": 11}, {"categoryKey": "brain_health", "categoryId": "P4-C12", "pillarKey": "balance_brain_health", "label": "Brain Health", "orderInPillar": 2, "globalOrder": 12}], "constructs": [{"constructKey": "strength_endurance_split", "label": "Strength & Endurance", "parentCategoryKeys": ["strength", "endurance"], "notes": "Splits across the Strength (P1-C4) and Endurance (P1-C5) categories in Pillar 1. Never render as a single category label."}, {"constructKey": "nutrient_density", "label": "Nutrient Density", "parentCategoryKeys": ["nutrition"], "notes": "Measurement construct scored inside Nutrition -- never rendered as a standalone category label."}, {"constructKey": "gut_microbiome", "label": "Gut Microbiome", "parentCategoryKeys": ["nutrition"], "notes": "Measurement construct scored inside Nutrition -- never rendered as a standalone category label."}, {"constructKey": "sleep_quality", "label": "Sleep Quality", "parentCategoryKeys": ["recovery"], "notes": "Measurement construct scored inside Recovery -- never rendered as a standalone category label."}, {"constructKey": "hrv_baseline", "label": "HRV Baseline", "parentCategoryKeys": ["recovery"], "notes": "Measurement construct scored inside Recovery -- never rendered as a standalone category label."}, {"constructKey": "cortisol_regulation", "label": "Cortisol Regulation", "parentCategoryKeys": ["stress_management"], "notes": "Measurement construct scored inside Stress Management -- never rendered as a standalone category label."}, {"constructKey": "dual_task_processing", "label": "Dual-Task Processing", "parentCategoryKeys": ["balance"], "notes": "Required individually, not only rolled up -- otherwise indistinguishable from CP-05 (Neuro-Metabolic Decline Pattern) at category level."}, {"constructKey": "bone_density", "label": "Bone Density", "parentCategoryKeys": ["balance"], "notes": "Required individually, not only rolled up -- otherwise indistinguishable from CP-04 (Osteosarcopenia Compound Risk) at category level. Both patterns read as 'Balance low' if this construct is not exposed on its own."}, {"constructKey": "cognitive_reserve", "label": "Cognitive Reserve", "parentCategoryKeys": ["brain_health"], "notes": "Measurement construct scored inside Brain Health -- never rendered as a standalone category label."}], "gmmbbAxes": [{"axisKey": "gut", "label": "Gut Health", "weightPercent": 25, "angleDeg": -90, "order": 1, "markers": ["Microbiome diversity", "GI inflammation", "absorption efficiency"]}, {"axisKey": "muscle", "label": "Muscle Integrity", "weightPercent": 25, "angleDeg": -18, "order": 2, "markers": ["Lean mass retention", "fiber-type composition", "anabolic sensitivity"]}, {"axisKey": "metabolic", "label": "Metabolic Function", "weightPercent": 20, "angleDeg": 54, "order": 3, "markers": ["Insulin sensitivity", "mitochondrial output", "metabolic flexibility"]}, {"axisKey": "bone", "label": "Bone-Balance", "weightPercent": 15, "angleDeg": 126, "order": 4, "markers": ["Bone mineral density", "trabecular integrity", "force absorption"]}, {"axisKey": "brain", "label": "Brain Health", "weightPercent": 15, "angleDeg": 198, "order": 5, "markers": ["Cognitive reserve", "neuroplasticity markers", "dual-task processing"]}], "modifyingFactors": [{"factorKey": "gut_health", "label": "Gut Health", "appliesToPillarKeys": ["nutrition_metabolism"], "scopeNote": "Gut microbiome construct within the Nutrition category."}, {"factorKey": "bone_reserve", "label": "Bone Reserve", "appliesToPillarKeys": ["balance_brain_health"], "scopeNote": "Bone density construct within the Balance category."}, {"factorKey": "hormonal_balance", "label": "Hormonal Balance", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism", "balance_brain_health"], "scopeNote": "Scope narrowed to andropause and thyroid only. Menopausal status is a Population Overlay, not part of this factor (see decision D-009)."}, {"factorKey": "mitochondrial_function", "label": "Mitochondrial Function", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism"], "scopeNote": "Cellular energy; feeds the Metabolic GMMBB axis via Cross-Cutting Node CCN-03."}, {"factorKey": "inflammation_status", "label": "Inflammation Status", "appliesToPillarKeys": ["exercise_mobility", "nutrition_metabolism", "recovery_stress", "balance_brain_health"], "scopeNote": "Systemic modifier across all pillars."}, {"factorKey": "neurological_reserve", "label": "Neurological Reserve", "appliesToPillarKeys": ["balance_brain_health"], "scopeNote": "Cognitive and balance."}], "populationOverlays": [{"overlayKey": "pickleball", "label": "Pickleball", "elevatesCategoryKeys": ["joint_health", "balance"], "description": "Elevates Joint Health, Balance (dual-task), force absorption."}, {"overlayKey": "osteoporosis", "label": "Osteoporosis", "elevatesCategoryKeys": ["balance", "functional_independence"], "description": "Elevates Balance (bone reserve), Functional Independence, fall risk."}, {"overlayKey": "glp1", "label": "GLP-1", "elevatesCategoryKeys": ["metabolic_flexibility", "nutrition"], "description": "Elevates Metabolic Flexibility, Nutrition, lean mass preservation."}, {"overlayKey": "post_hospital", "label": "Post-Hospital", "elevatesCategoryKeys": ["functional_independence", "recovery", "stress_management"], "description": "Elevates Functional Independence, Recovery, Stress Management."}, {"overlayKey": "perimenopause", "label": "Perimenopause", "elevatesCategoryKeys": ["balance", "strength", "recovery", "metabolic_flexibility", "brain_health"], "description": "Whole-system re-weighting -- bone and muscle decline together rather than sequentially, not a single-category tilt.", "requiresIntakeField": "menopausal_status"}, {"overlayKey": "postmenopause", "label": "Postmenopause", "elevatesCategoryKeys": ["balance", "strength", "metabolic_flexibility"], "description": "Chronic altered baseline -- loss rate decelerates while cumulative risk climbs. Same categories as perimenopause, different tempo and copy.", "requiresIntakeField": "menopausal_status"}], "convergencePatterns": [{"patternId": "CP-01", "canonicalName": "Cortisol-Catabolic Loop", "deprecatedNames": ["Catabolic Cascade"], "dataStatus": "confirmed"}, {"patternId": "CP-02", "canonicalName": "Anabolic Resistance Syndrome", "deprecatedNames": ["Anabolic Resistance Pattern"], "dataStatus": "confirmed"}, {"patternId": "CP-03", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}, {"patternId": "CP-04", "canonicalName": "Osteosarcopenia Compound Risk", "deprecatedNames": ["Osteosarcopenic Frailty"], "dataStatus": "confirmed"}, {"patternId": "CP-05", "canonicalName": "Neuro-Metabolic Decline Pattern", "deprecatedNames": ["Neuromotor Drift"], "dataStatus": "confirmed"}, {"patternId": "CP-06", "canonicalName": "Mitochondrial Crisis", "deprecatedNames": [], "dataStatus": "confirmed"}, {"patternId": "CP-07", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}, {"patternId": "CP-08", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}, {"patternId": "CP-09", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}, {"patternId": "CP-10", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}, {"patternId": "CP-11", "deprecatedNames": [], "dataStatus": "pending_registry_data", "description": "Full definition lives in 01-canonical/CONVERGENCE-PATTERNS.md, not yet available to this build. Do not invent trigger logic."}], "crossCuttingNodes": [], "riskTiers": [{"tierKey": "optimized", "label": "Optimized", "order": 1, "minScore": 85, "maxScore": 100, "colorHex": "#009090", "mutedColorHex": "#e6f5f5", "clinicalCopy": "Top-decile profile. Maintenance protocols only."}, {"tierKey": "functional", "label": "Functional", "order": 2, "minScore": 70, "maxScore": 84, "colorHex": "#3b82f6", "mutedColorHex": "#eff6ff", "clinicalCopy": "Strong foundation. Targeted optimization wins available."}, {"tierKey": "declining", "label": "Declining", "order": 3, "minScore": 55, "maxScore": 69, "colorHex": "#f59e0b", "mutedColorHex": "#fef3c7", "clinicalCopy": "Measurable signals of age-related drift. Highest-leverage intervention window."}, {"tierKey": "at_risk", "label": "At Risk", "order": 4, "minScore": 40, "maxScore": 54, "colorHex": "#f97316", "mutedColorHex": "#ffedd5", "clinicalCopy": "Multiple systems under strain. Clinical protocol indicated."}, {"tierKey": "critical", "label": "Critical", "order": 5, "minScore": 0, "maxScore": 39, "colorHex": "#dc2626", "mutedColorHex": "#fee2e2", "clinicalCopy": "Immediate clinical consultation recommended."}], "clinicalRiskBands": [{"bandKey": "minimal", "label": "Minimal Risk", "order": 1, "minPercent": 0, "maxPercent": 0.2}, {"bandKey": "low", "label": "Low Risk", "order": 2, "minPercent": 0.21, "maxPercent": 0.4}, {"bandKey": "moderate", "label": "Moderate Risk", "order": 3, "minPercent": 0.41, "maxPercent": 0.6}, {"bandKey": "high", "label": "High Risk", "order": 4, "minPercent": 0.61, "maxPercent": 0.8}, {"bandKey": "critical", "label": "Critical Risk", "order": 5, "minPercent": 0.81, "maxPercent": 1.0}]};
+
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a = {}, parent) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (parent) parent.appendChild(e); return e; };
+  const pc = { exercise_mobility: 'var(--teal)', nutrition_metabolism: 'var(--gold)', recovery_stress: 'var(--purple)', balance_brain_health: 'var(--green)' };
+  const rad = (d) => d * Math.PI / 180;
+  const polar = (cx, cy, a, r) => ({ x: cx + r * Math.cos(rad(a)), y: cy + r * Math.sin(rad(a)) });
+  const catById = Object.fromEntries(T.categories.map(c => [c.categoryKey, c]));
+  const pillarLabel = Object.fromEntries(T.pillars.map(p => [p.pillarKey, p.label]));
+
+  // nav border on scroll
+  const nav = $('#nav'); const onS = () => nav.classList.toggle('scrolled', window.scrollY > 8); onS(); addEventListener('scroll', onS, { passive: true });
+
+  // skin toggle
+  const grid = $('#screens-grid'), note = $('#screensNote');
+  const notes = {
+    legacy: 'As built: placeholder styling from src/styles/global.css. A system font, a generic gray palette, and a teal that is not the brand teal. Result values shown are sample data.',
+    brand: 'Brand direction: the same layouts and fields with Cormorant Garamond and Outfit, warm surface, brand teal, pill buttons and sentence-case copy. A preview of Step 7, not built.'
+  };
+  document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.toggle button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    grid.dataset.mode = b.dataset.mode; note.textContent = notes[b.dataset.mode];
+  }));
+
+  // ---- 4-pillar matrix ----
+  const R = 118, C = 210, rs = $('#radar');
+  [25, 50, 75, 100].forEach((v, i) => {
+    const pts = T.pillars.map(p => { const q = polar(C, C, p.radarAngleDeg, R * v / 100); return q.x + ',' + q.y; }).join(' ');
+    el('polygon', { points: pts, fill: i === 3 ? 'var(--teal-tint)' : 'none', stroke: i === 3 ? 'var(--teal)' : 'var(--border)', 'stroke-width': i === 3 ? 1.5 : 1, 'stroke-dasharray': i === 3 ? '' : '3 4' }, rs);
+  });
+  T.pillars.forEach(p => { const q = polar(C, C, p.radarAngleDeg, R); el('line', { x1: C, y1: C, x2: q.x, y2: q.y, stroke: 'var(--border)' }, rs); });
+  const samplePts = { exercise_mobility: 76, nutrition_metabolism: 62, recovery_stress: 58, balance_brain_health: 84 };
+  const sg = el('g', { id: 'sampleG', style: 'display:none' }, rs);
+  el('polygon', { points: T.pillars.map(p => { const q = polar(C, C, p.radarAngleDeg, R * samplePts[p.pillarKey] / 100); return q.x + ',' + q.y; }).join(' '), fill: 'rgba(0,144,144,0.16)', stroke: 'var(--teal)', 'stroke-width': 2, 'stroke-linejoin': 'round' }, sg);
+  T.pillars.forEach(p => { const q = polar(C, C, p.radarAngleDeg, R * samplePts[p.pillarKey] / 100); el('circle', { cx: q.x, cy: q.y, r: 5, fill: pc[p.pillarKey], stroke: '#fff', 'stroke-width': 2 }, sg); });
+  T.pillars.forEach(p => {
+    const q = polar(C, C, p.radarAngleDeg, R + 36); const g = el('g', {}, rs);
+    el('circle', { cx: q.x, cy: q.y, r: 19, fill: pc[p.pillarKey] }, g);
+    const t = el('text', { x: q.x, y: q.y + 5, 'text-anchor': 'middle', fill: '#fff', 'font-size': 15, 'font-weight': 700, 'font-family': 'Outfit, sans-serif' }, g); t.textContent = p.radarLetter;
+    const up = p.radarAngleDeg === -90;
+    const ly = up ? q.y - 30 : q.y + 36;
+    const l = el('text', { x: q.x, y: ly, 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': 12.5, 'font-weight': 600, 'font-family': 'Outfit, sans-serif' }, g); l.textContent = p.label;
+    const l2 = el('text', { x: q.x, y: up ? ly - 15 : ly + 15, 'text-anchor': 'middle', fill: 'var(--ink-muted)', 'font-size': 11, 'font-family': 'Outfit, sans-serif' }, g); l2.textContent = p.categoryCount + ' categories';
+  });
+  $('#sample').addEventListener('change', e => { sg.style.display = e.target.checked ? '' : 'none'; });
+
+  // ---- GMMBB pentagon ----
+  const ps = $('#penta'), PC = 210, PR = 130;
+  [25, 50, 75, 100].forEach((v, i) => {
+    const pts = T.gmmbbAxes.map(a => { const q = polar(PC, PC, a.angleDeg, PR * v / 100); return q.x + ',' + q.y; }).join(' ');
+    el('polygon', { points: pts, fill: i === 3 ? 'var(--gold-muted)' : 'none', stroke: i === 3 ? 'var(--gold)' : 'var(--border)', 'stroke-width': i === 3 ? 1.5 : 1, 'stroke-dasharray': i === 3 ? '' : '3 4' }, ps);
+  });
+  T.gmmbbAxes.forEach(a => { const q = polar(PC, PC, a.angleDeg, PR); el('line', { x1: PC, y1: PC, x2: q.x, y2: q.y, stroke: 'var(--border)' }, ps); });
+  T.gmmbbAxes.forEach(a => {
+    const v = polar(PC, PC, a.angleDeg, PR); const dr = 6 + a.weightPercent * 0.42; const cs = Math.cos(rad(a.angleDeg)), sn = Math.sin(rad(a.angleDeg));
+    el('circle', { cx: v.x, cy: v.y, r: dr, fill: 'var(--teal)', opacity: 0.9 }, ps);
+    const w = el('text', { x: v.x, y: v.y + 4, 'text-anchor': 'middle', fill: '#fff', 'font-size': 11, 'font-weight': 700, 'font-family': 'Outfit, sans-serif' }, ps); w.textContent = a.weightPercent;
+    const anchor = cs > 0.3 ? 'start' : cs < -0.3 ? 'end' : 'middle';
+    const lx = v.x + (anchor === 'start' ? dr + 8 : anchor === 'end' ? -(dr + 8) : 0);
+    const ly = anchor === 'middle' ? v.y + (sn < 0 ? -(dr + 18) : dr + 22) : v.y + 4 + (sn > 0.5 ? 14 : 0);
+    const t = el('text', { x: lx, y: ly, 'text-anchor': anchor, fill: 'var(--ink)', 'font-size': 12.5, 'font-weight': 600, 'font-family': 'Outfit, sans-serif' }, ps); t.textContent = a.label;
+    const t2 = el('text', { x: lx, y: ly + 14, 'text-anchor': anchor, fill: 'var(--ink-muted)', 'font-size': 11, 'font-family': 'Outfit, sans-serif' }, ps); t2.textContent = a.axisKey[0].toUpperCase() + ' axis';
+  });
+
+  // ---- pillar cards ----
+  const pw = $('#pillars');
+  T.pillars.forEach(p => {
+    const cats = T.categories.filter(c => c.pillarKey === p.pillarKey).sort((a, b) => a.orderInPillar - b.orderInPillar);
+    const d = document.createElement('article'); d.className = 'pillar'; d.style.setProperty('--pc', pc[p.pillarKey]);
+    d.innerHTML = '<header><span class="ltr">' + p.radarLetter + '</span><div><h4>' + p.label + '</h4><div class="cnt">Pillar ' + p.order + ' · ' + p.categoryCount + ' categories</div></div></header>' +
+      '<p class="frame-t"><i>' + p.beliefNarrative + '.</i> ' + p.problemFraming + '.</p><div class="cats">' +
+      cats.map(c => '<div class="cat"><code>' + c.categoryId + '</code><span>' + c.label + '</span></div>').join('') + '</div>';
+    pw.appendChild(d);
+  });
+
+  // ---- tiers & bands ----
+  const tiers = $('#tiers'); [...T.riskTiers].sort((a, b) => b.order - a.order).forEach(t => {
+    const w = (t.maxScore - t.minScore + 1); const d = document.createElement('div'); d.style.flex = w;
+    d.style.background = t.colorHex; d.style.color = (t.tierKey === 'declining') ? 'var(--ink)' : '#fff';
+    d.innerHTML = t.label + '<small>' + t.minScore + '–' + t.maxScore + '</small>'; tiers.appendChild(d);
+  });
+  const ramp = ['#e3e6ea', '#c3cad3', '#8d99a8', '#4d5c70', '#1a2332']; const bands = $('#bands');
+  [...T.clinicalRiskBands].sort((a, b) => a.order - b.order).forEach((b, i) => {
+    const d = document.createElement('div'); d.style.flex = 1; d.style.background = ramp[i]; d.style.color = i < 2 ? 'var(--ink)' : '#fff';
+    d.innerHTML = b.label.replace(' Risk', '') + '<small>' + Math.round(b.minPercent * 100) + '–' + Math.round(b.maxPercent * 100) + '%</small>'; bands.appendChild(d);
+  });
+
+  // ---- patterns, factors, overlays ----
+  $('#cps').innerHTML = T.convergencePatterns.map(p => '<tr class="' + (p.dataStatus === 'confirmed' ? '' : 'pend') + '"><td><b>' + p.patternId + '</b></td><td>' +
+    (p.canonicalName ? p.canonicalName + (p.deprecatedNames.length ? '<div style="font-size:12px;color:var(--ink-muted)">formerly: ' + p.deprecatedNames.join(', ') + '</div>' : '') : 'Awaiting canonical registry') +
+    '</td><td>' + (p.dataStatus === 'confirmed' ? '<span class="badge b-built">Named</span>' : '<span class="badge b-wait">Pending</span>') + '</td></tr>').join('');
+  $('#mfs').innerHTML = T.modifyingFactors.map(f => '<tr><td><b>' + f.label + '</b></td><td>' + f.appliesToPillarKeys.map(k => pillarLabel[k]).join(', ') + '</td></tr>').join('');
+  $('#overlays').innerHTML = T.populationOverlays.map(o => '<div class="ovc"><h5>' + o.label + '</h5><p style="font-size:13px;color:var(--ink-soft)">' + o.description + '</p><div class="e">' +
+    o.elevatesCategoryKeys.map(k => '<code title="' + catById[k].label + '">' + catById[k].categoryId + ' ' + catById[k].label + '</code>').join('') + '</div>' +
+    (o.requiresIntakeField ? '<div class="req">Needs the intake field: ' + o.requiresIntakeField + '</div>' : '') + '</div>').join('');
+
+  // scroll reveal (applied by script so the page stays fully visible without JS)
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); } }), { threshold: 0.06 });
+    document.querySelectorAll('.sec-head, .flow, .two, .screens, .arch, .group, .fw, .pillars, .road, .issues').forEach(n => { n.classList.add('mmm-reveal'); io.observe(n); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -37,7 +37,6 @@ export interface Pillar {
   radarAngleDeg: number;
   order: number;
   categoryCount: number;
-  gated: boolean;
   problemFraming?: string;
   beliefNarrative?: string;
   clinicalTags: string[];
@@ -46,6 +45,8 @@ export interface Pillar {
 
 export interface Category {
   categoryKey: string;
+  /** Canonical P#-C# id, C1-C12 continuous (e.g. "P1-C4" = Strength). */
+  categoryId: string;
   pillarKey: PillarKey;
   label: string;
   orderInPillar: number;

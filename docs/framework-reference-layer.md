@@ -14,13 +14,24 @@ implementation of that kernel). If this layer and the canonical document
 ever disagree, the document wins and this layer is the bug — bump
 `frameworkVersion.versionTag` in the JSON and re-run the seed mutation.
 
+## Canon corrections applied (2026-09-16)
+
+The `muscle-meta-design` skill carries two decisions that override `framework.md`:
+
+1. **Nothing is gated.** No gated pillar, category, lock, tease or Founding Member
+   tier. The `pillars` table has no `gated` field and none should be added.
+   Entitlements attach to *products* (a course, program, saved history, clinician
+   report), never to a region of the framework.
+2. **Categories are numbered C1-C12 continuously** with canonical `P#-C#` ids
+   (stored as `categories.categoryId`). Strength is P1-C4, Endurance is P1-C5.
+
 ## Tables (`convex/schema.ts`)
 
 | Table | Rows | Purpose |
 |---|---|---|
 | `frameworkVersions` | versioned | Tracks which taxonomy version is current |
 | `pillars` | 4 | Exercise & Mobility, Nutrition & Metabolism, Recovery & Stress, Balance & Brain Health |
-| `categories` | 12 | Asymmetric 5-2-3-2 split across pillars — never divide evenly by 12 |
+| `categories` | 12 | Asymmetric 5-2-3-2 split across pillars, ids P1-C1 … P4-C12 — never divide evenly by 12 |
 | `constructs` | 9 | Measurement constructs scored *inside* a category (e.g. Bone Density inside Balance) — never rendered as category labels |
 | `gmmbbAxes` | 5 | Gut 25% / Muscle 25% / Metabolic 20% / Bone 15% / Brain 15% — diagnostic lens, pentagon, not the pillar radar |
 | `modifyingFactors` | 6 | Influence category scores; never displayed as additional pillars |

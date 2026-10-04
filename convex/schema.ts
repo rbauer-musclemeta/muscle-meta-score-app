@@ -198,7 +198,6 @@ export default defineSchema({
     radarAngleDeg: v.number(),
     order: v.number(),
     categoryCount: v.number(),
-    gated: v.boolean(),
     problemFraming: v.optional(v.string()),
     beliefNarrative: v.optional(v.string()),
     clinicalTags: v.array(v.string()),
@@ -212,6 +211,8 @@ export default defineSchema({
   // surveyQuestions.categoryKey field without a type mismatch.
   categories: defineTable({
     categoryKey: v.string(),
+    // Canonical P#-C# identifier; C number is globally unique (C1-C12).
+    categoryId: v.string(),
     pillarKey: v.string(),
     label: v.string(),
     orderInPillar: v.number(),
@@ -219,13 +220,15 @@ export default defineSchema({
     frameworkVersion: v.string()
   })
     .index("by_categoryKey", ["categoryKey"])
+    .index("by_categoryId", ["categoryId"])
     .index("by_pillarKey", ["pillarKey"])
     .index("by_pillarKey_orderInPillar", ["pillarKey", "orderInPillar"]),
 
   // Measurement constructs scored INSIDE a category, never rendered as a
   // standalone category label (e.g. Bone Density lives inside Balance).
   // parentCategoryKeys is an array because one construct (Strength &
-  // Endurance) splits across two categories in Pillar 1.
+  // Endurance) splits across two categories in Pillar 1 (Strength P1-C4,
+  // Endurance P1-C5).
   constructs: defineTable({
     constructKey: v.string(),
     label: v.string(),
